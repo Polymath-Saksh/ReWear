@@ -34,4 +34,6 @@ class SwapDetailView(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         swap = self.get_object()
         # Only the owner can accept/reject/cancel
-        if self.request.user !=
+        if self.request.user != swap.item.owner and self.request.user != swap.requester:
+            raise permissions.PermissionDenied("You don't have permission to update this swap.")
+        serializer.save()

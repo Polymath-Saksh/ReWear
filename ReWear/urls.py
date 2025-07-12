@@ -17,8 +17,22 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
+    
+    # App URLs
+    path("", include("core.urls")),  # Landing page and core functionality
+    path("users/", include("users.urls")),  # User management
+    path("items/", include("items.urls")),  # Item management
+    path("swaps/", include("swaps.urls")),  # Swap functionality
+    path("dashboard/", include("dashboard.urls")),  # User dashboard
+    path("adminpanel/", include("adminpanel.urls")),  # Admin panel
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

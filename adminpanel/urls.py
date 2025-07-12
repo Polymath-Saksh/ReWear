@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'adminpanel'
+
 urlpatterns = [
     path('items/pending/', views.PendingItemListView.as_view(), name='pending-items'),
     path('items/<int:pk>/approve/', views.ApproveItemView.as_view(), name='approve-item'),

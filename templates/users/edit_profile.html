@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - ReWear{% endblock %}
+
+{% block content %}
+<div class="container-fluid min-vh-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="row justify-content-center align-items-center min-vh-100 py-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user-edit text-white" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <h2 class="fw-bold text-dark mb-2">Edit Profile</h2>
+                        <p class="text-muted">Update your personal information</p>
+                    </div>
+
+                    <!-- Profile Edit Form -->
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Profile Picture -->
+                        <div class="text-center mb-4">
+                            <div class="position-relative d-inline-block">
+                                <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                    {% if user.userprofile.profile_picture %}
+                                        <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                                    {% else %}
+                                        <i class="fas fa-user text-muted" style="font-size: 3rem;"></i>
+                                    {% endif %}
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle" style="width: 36px; height: 36px;">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                            <input type="file" id="profilePicture" name="profile_picture" class="form-control mt-3" accept="image/*">
+                        </div>
+
+                        <!-- Personal Information -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label fw-500">First Name</label>
+                                <input type="text" class="form-control rounded-3" id="firstName" name="first_name" value="{{ user.first_name }}" required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid first name.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label fw-500">Last Name</label>
+                                <input type="text" class="form-control rounded-3" id="lastName" name="last_name" value="{{ user.last_name }}" required>
+                                <div class="invalid-feedback">
+                                    Please provide a valid last name.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-500">Email Address</label>
+                            <input type="email" class="form-control rounded-3" id="email" name="email" value="{{ user.email }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-500">Username</label>
+                            <input type="text" class="form-control rounded-3" id="username" name="username" value="{{ user.username }}" required>
+                            <div class="invalid-feedback">
+                                Please choose a username.
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+                            <label for="bio" class="form-label fw-500">Bio</label>
+                            <textarea class="form-control rounded-3" id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">{% if user.userprofile.bio %}{{ user.userprofile.bio }}{% endif %}</textarea>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="city" class="form-label fw-500">City</label>
+                                <input type="text" class="form-control rounded-3" id="city" name="city" value="{% if user.userprofile.city %}{{ user.userprofile.city }}{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="country" class="form-label fw-500">Country</label>
+                                <input type="text" class="form-control rounded-3" id="country" name="country" value="{% if user.userprofile.country %}{{ user.userprofile.country }}{% endif %}">
+                            </div>
+                        </div>
+
+                        <!-- Preferences -->
+                        <div class="mb-4">
+                            <label class="form-label fw-500">Clothing Preferences</label>
+                            <div class="row">
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="casual" name="preferences" value="casual">
+                                        <label class="form-check-label" for="casual">
+                                            Casual
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="formal" name="preferences" value="formal">
+                                        <label class="form-check-label" for="formal">
+                                            Formal
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="vintage" name="preferences" value="vintage">
+                                        <label class="form-check-label" for="vintage">
+                                            Vintage
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="streetwear" name="preferences" value="streetwear">
+                                        <label class="form-check-label" for="streetwear">
+                                            Streetwear
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="athletic" name="preferences" value="athletic">
+                                        <label class="form-check-label" for="athletic">
+                                            Athletic
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="designer" name="preferences" value="designer">
+                                        <label class="form-check-label" for="designer">
+                                            Designer
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Privacy Settings -->
+                        <div class="mb-4">
+                            <label class="form-label fw-500">Privacy Settings</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="publicProfile" name="public_profile">
+                                <label class="form-check-label" for="publicProfile">
+                                    Make my profile public
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="emailNotifications" name="email_notifications">
+                                <label class="form-check-label" for="emailNotifications">
+                                    Receive email notifications
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary btn-lg px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Change Password Section -->
+                    <hr class="my-5">
+                    
+                    <div class="text-center">
+                        <h5 class="fw-bold text-dark mb-3">Change Password</h5>
+                        <p class="text-muted mb-3">Want to update your password?</p>
+                        <a href="#" class="btn btn-outline-warning">Change Password</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Profile picture preview
+document.getElementById('profilePicture').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.querySelector('.rounded-circle img');
+            if (img) {
+                img.src = e.target.result;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}
