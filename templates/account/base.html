@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ReWear - Community Clothing Exchange{% endblock %}</title>
+    <title>{% block title %}Account - ReWear{% endblock %}</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -29,7 +29,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary fs-2" href="{% url 'core:landing' %}">
-                <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="navbar-logo me-2" style="height: 2em;">
+                <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="navbar-logo me-2">
                 ReWear
             </a>
 
@@ -39,9 +39,6 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link fw-500" href="{% url 'core:landing' %}">Home</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link fw-500" href="{% url 'items:browse' %}">Browse Items</a>
                     </li>
@@ -64,6 +61,7 @@
                                 <i class="fas fa-user"></i>
                             </div>
                             <span class="fw-500">{{ user.username }}</span>
+                            <span class="badge bg-success ms-2">Eco Warrior</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
                             <li><a class="dropdown-item" href="{% url 'dashboard:profile' %}">
@@ -87,9 +85,8 @@
                             Login
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
-                            <li class="dropdown-header fw-bold text-muted">User Access</li>
                             <li><a class="dropdown-item" href="{% url 'users:login' %}">
-                                    <i class="fas fa-user me-2"></i>User Login
+                                    <i class="fas fa-envelope me-2"></i>Login with Email
                                 </a></li>
                             {% if socialaccount_providers %}
                             {% for provider in socialaccount_providers %}
@@ -110,11 +107,6 @@
                             {% endif %}
                             {% endfor %}
                             {% endif %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li class="dropdown-header fw-bold text-muted">Admin Access</li>
-                            <li><a class="dropdown-item" href="{% url 'adminpanel:login' %}">
-                                    <i class="fas fa-shield-alt me-2"></i>Admin Login
-                                </a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -144,32 +136,27 @@
 
     <!-- Main Content -->
     <main>
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h6 class="fw-bold text-primary mb-2">
-                        <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="footer-logo me-2" style="height: 1.5em;">ReWear
-                    </h6>
-                    <p class="mb-0 text-light opacity-75 small">
-                        Sustainable Fashion Exchange Platform
-                    </p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="mb-2">
-                        <a href="{% url 'items:browse' %}" class="text-light opacity-75 text-decoration-none me-3 small">Browse</a>
-                        <a href="{% url 'items:add' %}" class="text-light opacity-75 text-decoration-none me-3 small">List Item</a>
-                        <a href="{% url 'core:landing' %}" class="text-light opacity-75 text-decoration-none small">Home</a>
+        <div class="container-fluid min-vh-100 py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-md-6 col-lg-5 col-xl-4">
+                    <div class="card shadow-lg border-0 rounded-4">
+                        <div class="card-body p-4 p-md-5">
+                            {% block account_content %}
+                            <!-- Account-specific content goes here -->
+                            {% endblock %}
+                        </div>
                     </div>
-                    <p class="mb-0 text-light opacity-75 small">&copy; 2025 ReWear - Built for Hackathon</p>
+
+                    <!-- Back to Home -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'core:landing' %}" class="text-white text-decoration-none">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </footer>
+    </main>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

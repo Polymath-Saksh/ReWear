@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ profile_user.username }}'s Profile - ReWear{% endblock %}
+{                                <div class="text-center">
+                                    <h4 class="fw-bold mb-0">{{ profile_user.profile.successful_swaps|default:0 }}</h4>
+                                    <small class="opacity-75">Successful Swaps</small>
+                                </div>ock title %}{{ profile_user.username }}'s Profile - ReWear{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -48,8 +51,8 @@
                             </div>
                             <div class="col-4">
                                 <div class="profile-stat">
-                                    <h4 class="fw-bold mb-0">{{ profile_user.profile.points|default:0 }}</h4>
-                                    <small class="opacity-75">Points</small>
+                                    <h4 class="fw-bold mb-0">{{ profile_user.profile.total_swaps|default:0 }}</h4>
+                                    <small class="opacity-75">Successful Swaps</small>
                                 </div>
                             </div>
                         </div>
@@ -164,8 +167,7 @@
                                     <select class="form-select form-select-sm" style="width: auto;" onchange="sortItems(this.value)">
                                         <option value="newest">Newest First</option>
                                         <option value="oldest">Oldest First</option>
-                                        <option value="points_high">Highest Points</option>
-                                        <option value="points_low">Lowest Points</option>
+                                        <option value="category">By Category</option>
                                     </select>
                                 </div>
                             </div>
@@ -173,14 +175,11 @@
                             {% if available_items %}
                             <div class="row g-4" id="itemsGrid">
                                 {% for item in available_items %}
-                                <div class="col-lg-3 col-md-4 col-sm-6 item-card" data-category="{{ item.category }}" data-points="{{ item.points }}" data-date="{{ item.created_at|date:'Y-m-d' }}">
+                                <div class="col-lg-3 col-md-4 col-sm-6 item-card" data-category="{{ item.category }}" data-date="{{ item.created_at|date:'Y-m-d' }}">
                                     <div class="card h-100 border-0 shadow-sm rounded-custom item-hover">
                                         <div class="position-relative">
                                             <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/300x200?text=No+Image{% endif %}" 
                                                  class="card-img-top rounded-custom-top" height="200" style="object-fit: cover;">
-                                            <div class="position-absolute top-0 end-0 m-2">
-                                                <span class="badge bg-primary">{{ item.points }} pts</span>
-                                            </div>
                                             {% if item.condition %}
                                             <div class="position-absolute top-0 start-0 m-2">
                                                 <span class="badge {% if item.condition == 'excellent' %}bg-success{% elif item.condition == 'good' %}bg-info{% elif item.condition == 'fair' %}bg-warning{% else %}bg-secondary{% endif %}">
@@ -710,10 +709,6 @@ function sortItems(sortBy) {
                 return new Date(b.dataset.date) - new Date(a.dataset.date);
             case 'oldest':
                 return new Date(a.dataset.date) - new Date(b.dataset.date);
-            case 'points_high':
-                return parseInt(b.dataset.points) - parseInt(a.dataset.points);
-            case 'points_low':
-                return parseInt(a.dataset.points) - parseInt(b.dataset.points);
             default:
                 return 0;
         }

@@ -20,18 +20,18 @@
                         and help reduce textile waste while discovering unique pieces from our community.
                     </p>
                     <div class="d-flex flex-wrap gap-3 mb-4">
-                        <a href="{% url 'items:browse' %}" class="btn btn-white btn-lg">
-                            <i class="fas fa-search me-2"></i>Browse Items
-                        </a>
                         {% if not user.is_authenticated %}
-                        <a href="{% url 'users:signup' %}" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>Join Community
+                        <a href="{% url 'users:signup' %}" class="btn btn-white btn-lg">
+                            <i class="fas fa-exchange-alt me-2"></i>Start Swapping
                         </a>
                         {% else %}
-                        <a href="{% url 'items:add' %}" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-plus me-2"></i>List an Item
+                        <a href="{% url 'items:add' %}" class="btn btn-white btn-lg">
+                            <i class="fas fa-plus me-2"></i>Start Swapping
                         </a>
                         {% endif %}
+                        <a href="{% url 'items:browse' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-search me-2"></i>Browse Items
+                        </a>
                     </div>
                 </div>
             </div>
@@ -45,19 +45,19 @@
                         <div class="row text-center">
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <span class="stat-number counter" data-target="2500">0</span>
+                                    <span class="stat-number counter" data-target="{{ total_items }}">0</span>
                                     <span class="stat-label">Active Items</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <span class="stat-number counter" data-target="1200">0</span>
+                                    <span class="stat-number counter" data-target="{{ total_users }}">0</span>
                                     <span class="stat-label">Happy Users</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="stat-item">
-                                    <span class="stat-number counter" data-target="850">0</span>
+                                    <span class="stat-number counter" data-target="{{ total_swaps }}">0</span>
                                     <span class="stat-label">Successful Swaps</span>
                                 </div>
                             </div>
@@ -123,7 +123,7 @@
 </section>
 
 <!-- Featured Items Section -->
-<section class="py-5">
+<section class="py-5 featured-items">
     <div class="container">
         <div class="row mb-5">
             <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
@@ -134,117 +134,283 @@
             </div>
         </div>
 
-        <div class="row g-4" id="featuredItems">
-            {% for item in featured_items %}
-            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter|add:100 }}">
-                <div class="item-card">
-                    <div class="card-img-wrapper">
-                        <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/300x250?text=No+Image{% endif %}"
-                            class="card-img-top" alt="{{ item.title }}">
-                        <div class="item-category">{{ item.category }}</div>
-                        <div class="item-status">
-                            {% if item.is_available %}
-                            <i class="fas fa-check-circle me-1"></i>Available
-                            {% else %}
-                            <i class="fas fa-clock me-1"></i>Pending
-                            {% endif %}
+        <!-- Featured Items Carousel -->
+        <div id="featuredItemsCarousel" class="carousel slide" data-bs-ride="carousel" data-aos="fade-up">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#featuredItemsCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#featuredItemsCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#featuredItemsCarousel" data-bs-slide-to="2"></button>
+            </div>
+            
+            <div class="carousel-inner">
+                <!-- Slide 1 -->
+                <div class="carousel-item active">
+                    <div class="row g-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Vintage Denim Jacket">
+                                    <div class="item-category">Jackets</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Vintage Denim Jacket</h5>
+                                    <p class="card-text text-muted">Classic 90s style denim jacket in excellent condition...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">150 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Floral Summer Dress">
+                                    <div class="item-category">Dresses</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Floral Summer Dress</h5>
+                                    <p class="card-text text-muted">Beautiful flowery dress perfect for summer occasions...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">120 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Designer Sneakers">
+                                    <div class="item-category">Shoes</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Designer Sneakers</h5>
+                                    <p class="card-text text-muted">Premium sneakers with minimal wear, size 9...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">200 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1583743814966-8936f37f4ad2?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Cozy Knit Sweater">
+                                    <div class="item-category">Sweaters</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Cozy Knit Sweater</h5>
+                                    <p class="card-text text-muted">Soft and warm sweater, perfect for winter days...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">100 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">{{ item.title }}</h5>
-                        <p class="card-text text-muted">{{ item.description|truncatewords:10 }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="item-price">{{ item.points }} pts</div>
-                            <a href="{% url 'items:detail' item.id %}" class="btn btn-outline-primary btn-sm">
-                                View Details
-                            </a>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="carousel-item">
+                    <div class="row g-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Leather Handbag">
+                                    <div class="item-category">Accessories</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Leather Handbag</h5>
+                                    <p class="card-text text-muted">Genuine leather handbag with multiple compartments...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">180 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Silk Scarf">
+                                    <div class="item-category">Accessories</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Silk Scarf</h5>
+                                    <p class="card-text text-muted">Elegant silk scarf with beautiful floral pattern...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">80 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Formal Blazer">
+                                    <div class="item-category">Blazers</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Formal Blazer</h5>
+                                    <p class="card-text text-muted">Professional blazer perfect for business meetings...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">160 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Casual T-Shirt">
+                                    <div class="item-category">T-Shirts</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Casual T-Shirt</h5>
+                                    <p class="card-text text-muted">Comfortable cotton t-shirt in great condition...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">50 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3 -->
+                <div class="carousel-item">
+                    <div class="row g-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1549062572-544a64fb0c56?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Winter Coat">
+                                    <div class="item-category">Coats</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Winter Coat</h5>
+                                    <p class="card-text text-muted">Warm winter coat with faux fur lining...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">220 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Yoga Pants">
+                                    <div class="item-category">Activewear</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Yoga Pants</h5>
+                                    <p class="card-text text-muted">Stretchy and comfortable yoga pants for workouts...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">90 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Evening Gown">
+                                    <div class="item-category">Formal</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Evening Gown</h5>
+                                    <p class="card-text text-muted">Elegant evening gown perfect for special occasions...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">300 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="item-card">
+                                <div class="card-img-wrapper">
+                                    <img src="https://images.unsplash.com/photo-1560243563-062bfc001d68?w=300&h=250&fit=crop"
+                                        class="card-img-top" alt="Sun Hat">
+                                    <div class="item-category">Accessories</div>
+                                    <div class="item-status">
+                                        <i class="fas fa-check-circle me-1"></i>Available
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Sun Hat</h5>
+                                    <p class="card-text text-muted">Stylish sun hat with wide brim for sun protection...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="item-price">70 pts</div>
+                                        <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <!-- Placeholder items for demo -->
-            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
-                <div class="item-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300&h=250&fit=crop"
-                            class="card-img-top" alt="Vintage Denim Jacket">
-                        <div class="item-category">Jackets</div>
-                        <div class="item-status">
-                            <i class="fas fa-check-circle me-1"></i>Available
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Vintage Denim Jacket</h5>
-                        <p class="card-text text-muted">Classic 90s style denim jacket in excellent condition...</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="item-price">150 pts</div>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
-                <div class="item-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300&h=250&fit=crop"
-                            class="card-img-top" alt="Floral Summer Dress">
-                        <div class="item-category">Dresses</div>
-                        <div class="item-status">
-                            <i class="fas fa-check-circle me-1"></i>Available
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Floral Summer Dress</h5>
-                        <p class="card-text text-muted">Beautiful flowery dress perfect for summer occasions...</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="item-price">120 pts</div>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-                <div class="item-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=250&fit=crop"
-                            class="card-img-top" alt="Designer Sneakers">
-                        <div class="item-category">Shoes</div>
-                        <div class="item-status">
-                            <i class="fas fa-check-circle me-1"></i>Available
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Designer Sneakers</h5>
-                        <p class="card-text text-muted">Premium sneakers with minimal wear, size 9...</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="item-price">200 pts</div>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
-                <div class="item-card">
-                    <div class="card-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1583743814966-8936f37f4ad2?w=300&h=250&fit=crop"
-                            class="card-img-top" alt="Cozy Knit Sweater">
-                        <div class="item-category">Sweaters</div>
-                        <div class="item-status">
-                            <i class="fas fa-check-circle me-1"></i>Available
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">Cozy Knit Sweater</h5>
-                        <p class="card-text text-muted">Soft and warm sweater, perfect for winter days...</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="item-price">100 pts</div>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+            
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#featuredItemsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#featuredItemsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
 
         <div class="text-center mt-5" data-aos="fade-up">
@@ -262,7 +428,7 @@
             <div class="col-lg-8" data-aos="fade-right">
                 <h2 class="text-white fw-bold mb-3">Ready to Start Your Sustainable Journey?</h2>
                 <p class="text-white opacity-75 mb-0 fs-5">
-                    Join thousands of fashion lovers making a positive impact on the planet.
+                    Join the fashion lovers making a positive impact on the planet.
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end" data-aos="fade-left">
@@ -409,4 +575,146 @@
         }
     });
 </script>
+
+<style>
+/* Featured Items Carousel Styling */
+.featured-items {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+#featuredItemsCarousel {
+    position: relative;
+}
+
+#featuredItemsCarousel .carousel-control-prev,
+#featuredItemsCarousel .carousel-control-next {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 2px solid rgba(0, 123, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+#featuredItemsCarousel .carousel-control-prev:hover,
+#featuredItemsCarousel .carousel-control-next:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: var(--bs-primary);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+#featuredItemsCarousel .carousel-control-prev {
+    left: -30px;
+}
+
+#featuredItemsCarousel .carousel-control-next {
+    right: -30px;
+}
+
+#featuredItemsCarousel .carousel-control-prev-icon,
+#featuredItemsCarousel .carousel-control-next-icon {
+    width: 24px;
+    height: 24px;
+    background-size: 24px;
+    filter: invert(1) sepia(1) saturate(5) hue-rotate(200deg);
+}
+
+#featuredItemsCarousel .carousel-indicators {
+    margin-bottom: -30px;
+    gap: 8px;
+}
+
+#featuredItemsCarousel .carousel-indicators button {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bs-primary);
+    background-color: transparent;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+#featuredItemsCarousel .carousel-indicators button.active {
+    background-color: var(--bs-primary);
+    transform: scale(1.3);
+    opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #featuredItemsCarousel .carousel-control-prev,
+    #featuredItemsCarousel .carousel-control-next {
+        display: none;
+    }
+    
+    #featuredItemsCarousel .row .col-lg-3 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Item card hover effects */
+.item-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.item-card .card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.item-card .card-img-top {
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.item-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.item-category {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.item-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(40, 167, 69, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.item-price {
+    font-weight: 700;
+    color: var(--bs-primary);
+    font-size: 1.1rem;
+}
+</style>
 {% endblock %}

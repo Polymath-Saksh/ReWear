@@ -4,327 +4,423 @@
 {% block title %}Browse Items - ReWear{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Page Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="text-center" data-aos="fade-down">
+<!-- Hero Section -->
+<div class="bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
                 <h1 class="display-5 fw-bold mb-3">Discover Amazing Items</h1>
-                <p class="lead text-muted">Browse through thousands of sustainable fashion pieces from our community</p>
+                <p class="lead mb-0">{{ total_items }} unique items waiting for their next adventure</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'items:add' %}" class="btn btn-light btn-lg shadow">
+                    <i class="fas fa-plus me-2"></i>List Your Item
+                </a>
             </div>
         </div>
     </div>
-    
-    <!-- Search and Filter Section -->
-    <div class="filter-section" data-aos="fade-up">
-        <form method="GET" id="filterForm">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-4">
-                    <label for="search" class="form-label fw-bold">
-                        <i class="fas fa-search me-2"></i>Search Items
-                    </label>
-                    <input type="text" class="form-control" id="search" name="search" 
-                           placeholder="Search by title, description, or tags..." 
-                           value="{{ request.GET.search }}">
-                </div>
-                <div class="col-md-2">
-                    <label for="category" class="form-label fw-bold">
-                        <i class="fas fa-tags me-2"></i>Category
-                    </label>
-                    <select class="form-select" id="category" name="category">
-                        <option value="">All Categories</option>
-                        <option value="tops" {% if request.GET.category == 'tops' %}selected{% endif %}>Tops</option>
-                        <option value="bottoms" {% if request.GET.category == 'bottoms' %}selected{% endif %}>Bottoms</option>
-                        <option value="dresses" {% if request.GET.category == 'dresses' %}selected{% endif %}>Dresses</option>
-                        <option value="outerwear" {% if request.GET.category == 'outerwear' %}selected{% endif %}>Outerwear</option>
-                        <option value="shoes" {% if request.GET.category == 'shoes' %}selected{% endif %}>Shoes</option>
-                        <option value="accessories" {% if request.GET.category == 'accessories' %}selected{% endif %}>Accessories</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="size" class="form-label fw-bold">
-                        <i class="fas fa-ruler me-2"></i>Size
-                    </label>
-                    <select class="form-select" id="size" name="size">
-                        <option value="">All Sizes</option>
-                        <option value="XS" {% if request.GET.size == 'XS' %}selected{% endif %}>XS</option>
-                        <option value="S" {% if request.GET.size == 'S' %}selected{% endif %}>S</option>
-                        <option value="M" {% if request.GET.size == 'M' %}selected{% endif %}>M</option>
-                        <option value="L" {% if request.GET.size == 'L' %}selected{% endif %}>L</option>
-                        <option value="XL" {% if request.GET.size == 'XL' %}selected{% endif %}>XL</option>
-                        <option value="XXL" {% if request.GET.size == 'XXL' %}selected{% endif %}>XXL</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="condition" class="form-label fw-bold">
-                        <i class="fas fa-star me-2"></i>Condition
-                    </label>
-                    <select class="form-select" id="condition" name="condition">
-                        <option value="">All Conditions</option>
-                        <option value="new" {% if request.GET.condition == 'new' %}selected{% endif %}>New</option>
-                        <option value="like_new" {% if request.GET.condition == 'like_new' %}selected{% endif %}>Like New</option>
-                        <option value="good" {% if request.GET.condition == 'good' %}selected{% endif %}>Good</option>
-                        <option value="fair" {% if request.GET.condition == 'fair' %}selected{% endif %}>Fair</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="sort" class="form-label fw-bold">
-                        <i class="fas fa-sort me-2"></i>Sort By
-                    </label>
-                    <select class="form-select" id="sort" name="sort">
-                        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest First</option>
-                        <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
-                        <option value="points_low" {% if request.GET.sort == 'points_low' %}selected{% endif %}>Points: Low to High</option>
-                        <option value="points_high" {% if request.GET.sort == 'points_high' %}selected{% endif %}>Points: High to Low</option>
-                        <option value="popular" {% if request.GET.sort == 'popular' %}selected{% endif %}>Most Popular</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary me-2">
-                        <i class="fas fa-filter me-2"></i>Apply Filters
-                    </button>
-                    <a href="{% url 'items:browse' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-2"></i>Clear Filters
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
-    
-    <!-- Results Header -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <p class="text-muted mb-0" data-aos="fade-right">
-                <i class="fas fa-info-circle me-2"></i>
-                Showing {{ items.count|default:0 }} items
-                {% if request.GET.search %}for "{{ request.GET.search }}"{% endif %}
-            </p>
-        </div>
-        <div class="col-md-6 text-md-end">
-            <div class="btn-group" role="group" data-aos="fade-left">
-                <button type="button" class="btn btn-outline-secondary active" id="gridView">
-                    <i class="fas fa-th-large"></i>
-                </button>
-                <button type="button" class="btn btn-outline-secondary" id="listView">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Items Grid -->
-    <div id="itemsContainer">
-        {% if items %}
-        <div class="row g-4" id="itemsGrid">
-            {% for item in items %}
-            <div class="col-lg-3 col-md-6 item-wrapper" data-aos="zoom-in" data-aos-delay="{{ forloop.counter|add:100 }}" data-category="{{ item.category }}">
-                <div class="item-card">
-                    <div class="card-img-wrapper">
-                        <a href="{% url 'items:detail' item.id %}">
-                            <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/300x250?text=No+Image{% endif %}" 
-                                 class="card-img-top" alt="{{ item.title }}">
-                        </a>
-                        <div class="item-category">{{ item.get_category_display }}</div>
-                        <div class="item-status">
-                            {% if item.is_available %}
-                                <i class="fas fa-check-circle me-1"></i>Available
-                            {% else %}
-                                <i class="fas fa-clock me-1"></i>Pending
-                            {% endif %}
-                        </div>
-                        
-                        <!-- Quick Actions -->
-                        <div class="position-absolute top-0 end-0 p-2" style="z-index: 5;">
-                            <div class="d-flex flex-column gap-2">
-                                <button class="btn btn-sm btn-white rounded-circle" data-bs-toggle="tooltip" title="Add to Wishlist">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                                {% if user.is_authenticated %}
-                                <button class="btn btn-sm btn-white rounded-circle" data-bs-toggle="tooltip" title="Quick Swap">
-                                    <i class="fas fa-exchange-alt"></i>
-                                </button>
-                                {% endif %}
-                            </div>
-                        </div>
+</div>
+
+<!-- Main Content -->
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="sticky-top" style="top: 20px;">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="mb-0 text-dark">
+                            <i class="fas fa-sliders-h me-2 text-primary"></i>Refine Your Search
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title fw-bold mb-2">
-                            <a href="{% url 'items:detail' item.id %}" class="text-decoration-none text-dark">
-                                {{ item.title }}
-                            </a>
-                        </h5>
-                        <p class="card-text text-muted mb-2">{{ item.description|truncatewords:12 }}</p>
-                        
-                        <div class="d-flex flex-wrap gap-1 mb-3">
-                            <span class="badge bg-light text-dark">{{ item.size }}</span>
-                            <span class="badge bg-light text-dark">{{ item.get_condition_display }}</span>
-                            {% if item.type %}
-                            <span class="badge bg-light text-dark">{{ item.type }}</span>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="item-price mb-1">{{ item.points }} pts</div>
-                                <div class="d-flex align-items-center text-muted small">
-                                    <div class="avatar-circle me-2" style="width: 20px; height: 20px; font-size: 0.7rem;">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    {{ item.owner.username }}
-                                </div>
+                        <form method="GET" id="filterForm">
+                            <!-- Search -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-search me-2 text-muted"></i>Search Items
+                                </label>
+                                <input type="text" name="search" class="form-control form-control-lg border-2" 
+                                       placeholder="What are you looking for?" value="{{ search_query }}">
                             </div>
-                            <div class="d-flex flex-column gap-1">
-                                <a href="{% url 'items:detail' item.id %}" class="btn btn-primary btn-sm">
-                                    View Details
-                                </a>
-                                {% if user.is_authenticated and item.owner != user and item.is_available %}
-                                <button class="btn btn-outline-success btn-sm" onclick="quickSwap({{ item.id }})">
-                                    <i class="fas fa-bolt me-1"></i>Quick Swap
+
+                            <!-- Category Filter -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-tags me-2 text-muted"></i>Category
+                                </label>
+                                <select name="category" class="form-select form-select-lg border-2">
+                                    <option value="">All Categories</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category }}" {% if category == category_filter %}selected{% endif %}>
+                                        {{ category|title }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Size Filter -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-ruler me-2 text-muted"></i>Size
+                                </label>
+                                <select name="size" class="form-select form-select-lg border-2">
+                                    <option value="">All Sizes</option>
+                                    {% for size in sizes %}
+                                    <option value="{{ size }}" {% if size == size_filter %}selected{% endif %}>
+                                        {{ size }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Condition Filter -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-dark">
+                                    <i class="fas fa-star me-2 text-muted"></i>Condition
+                                </label>
+                                <select name="condition" class="form-select form-select-lg border-2">
+                                    <option value="">All Conditions</option>
+                                    {% for condition in conditions %}
+                                    <option value="{{ condition }}" {% if condition == condition_filter %}selected{% endif %}>
+                                        {{ condition|title }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-magic me-2"></i>Apply Filters
                                 </button>
-                                {% endif %}
+                                <a href="{% url 'items:browse' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-refresh me-2"></i>Reset All
+                                </a>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        
-        <!-- Pagination -->
-        {% if is_paginated %}
-        <nav aria-label="Items pagination" class="mt-5" data-aos="fade-up">
-            <ul class="pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.size %}&size={{ request.GET.size }}{% endif %}{% if request.GET.condition %}&condition={{ request.GET.condition }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-                        <i class="fas fa-angle-double-left"></i>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.size %}&size={{ request.GET.size }}{% endif %}{% if request.GET.condition %}&condition={{ request.GET.condition }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-                        <i class="fas fa-angle-left"></i>
-                    </a>
-                </li>
-                {% endif %}
-                
-                {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                    <li class="page-item active">
-                        <span class="page-link">{{ num }}</span>
-                    </li>
-                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.size %}&size={{ request.GET.size }}{% endif %}{% if request.GET.condition %}&condition={{ request.GET.condition }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a>
-                    </li>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.size %}&size={{ request.GET.size }}{% endif %}{% if request.GET.condition %}&condition={{ request.GET.condition }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-                        <i class="fas fa-angle-right"></i>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.size %}&size={{ request.GET.size }}{% endif %}{% if request.GET.condition %}&condition={{ request.GET.condition }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">
-                        <i class="fas fa-angle-double-right"></i>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
-        
-        {% else %}
-        <!-- No Items Found -->
-        <div class="text-center py-5" data-aos="fade-up">
-            <i class="fas fa-search fa-4x text-muted mb-4"></i>
-            <h3 class="fw-bold text-muted mb-3">No items found</h3>
-            <p class="text-muted mb-4">
-                {% if request.GET.search %}
-                    We couldn't find any items matching "{{ request.GET.search }}". Try adjusting your search terms or filters.
-                {% else %}
-                    It looks like there are no items matching your current filters. Try adjusting your criteria.
-                {% endif %}
-            </p>
-            <div class="d-flex flex-wrap justify-content-center gap-2">
-                <a href="{% url 'items:browse' %}" class="btn btn-outline-primary">
-                    <i class="fas fa-times me-2"></i>Clear All Filters
-                </a>
-                {% if user.is_authenticated %}
-                <a href="{% url 'items:add' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>List an Item
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
-    </div>
-</div>
 
-<!-- Quick Swap Modal -->
-<div class="modal fade" id="quickSwapModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-bolt me-2"></i>Quick Swap Request
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <!-- Items Grid -->
+        <div class="col-lg-9">
+            <!-- Results Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-1">
+                        {% if search_query %}
+                            Results for "{{ search_query }}"
+                        {% else %}
+                            All Items
+                        {% endif %}
+                    </h4>
+                    <p class="text-muted mb-0">
+                        {{ page_obj.paginator.count|default:0 }} item{{ page_obj.paginator.count|pluralize }} found
+                    </p>
+                </div>
+                <div class="btn-group shadow-sm" role="group">
+                    <button type="button" class="btn btn-outline-primary active" id="gridView">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="listView">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="quickSwapForm">
-                    {% csrf_token %}
-                    <input type="hidden" id="swapItemId" name="item_id">
-                    
-                    <div class="mb-3">
-                        <label for="swapType" class="form-label fw-bold">Swap Type</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="swap_type" id="directSwap" value="direct" checked>
-                            <label class="form-check-label" for="directSwap">
-                                <i class="fas fa-exchange-alt me-2"></i>Direct Item Swap
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="swap_type" id="pointsSwap" value="points">
-                            <label class="form-check-label" for="pointsSwap">
-                                <i class="fas fa-coins me-2"></i>Use Points ({{ user.profile.points|default:0 }} available)
-                            </label>
+
+            <!-- Items Container -->
+            {% if page_obj and page_obj.object_list %}
+                <div class="row g-4" id="itemsGrid">
+                    {% for item in page_obj %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card item-card h-100 border-0 shadow-sm">
+                            <div class="position-relative overflow-hidden">
+                                {% if item.itemimage_set.first %}
+                                <img src="{{ item.itemimage_set.first.image.url }}" 
+                                     class="card-img-top item-image" alt="{{ item.title }}">
+                                {% else %}
+                                <div class="card-img-top placeholder-image d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-tshirt fa-4x text-muted"></i>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Badges -->
+                                <div class="position-absolute top-0 start-0 p-3">
+                                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                                        {{ item.category|title }}
+                                    </span>
+                                </div>
+                                
+                                <div class="position-absolute top-0 end-0 p-3">
+                                    <span class="badge rounded-pill px-3 py-2
+                                        {% if item.condition == 'new' %}bg-success
+                                        {% elif item.condition == 'excellent' %}bg-info
+                                        {% elif item.condition == 'good' %}bg-warning text-dark
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ item.condition|title }}
+                                    </span>
+                                </div>
+
+                                <!-- Hover Overlay -->
+                                <div class="item-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <a href="{% url 'items:detail' item.pk %}" class="btn btn-light btn-lg rounded-circle shadow">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body d-flex flex-column p-4">
+                                <h5 class="card-title fw-bold mb-2">{{ item.title }}</h5>
+                                <p class="card-text text-muted flex-grow-1 mb-3">
+                                    {{ item.description|truncatewords:12 }}
+                                </p>
+                                
+                                <div class="item-meta mb-3">
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="fas fa-tag me-1"></i>{{ item.size }}
+                                        </span>
+                                        {% if item.brand %}
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="fas fa-star me-1"></i>{{ item.brand }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>by {{ item.owner.username }}
+                                    </small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="h5 text-primary mb-0 fw-bold">
+                                        <i class="fas fa-coins me-1"></i>{{ item.point_value }} pts
+                                    </div>
+                                    <a href="{% url 'items:detail' item.pk %}" class="btn btn-primary rounded-pill px-4">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="mb-3" id="itemSelectionDiv">
-                        <label for="offeredItem" class="form-label fw-bold">Select Item to Offer</label>
-                        <select class="form-select" id="offeredItem" name="offered_item">
-                            <option value="">Choose an item...</option>
-                            <!-- Will be populated via AJAX -->
-                        </select>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Items pagination" class="mt-5">
+                    <ul class="pagination pagination-lg justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link rounded-pill me-2" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if size_filter %}&size={{ size_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link rounded-pill mx-1">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link rounded-pill mx-1" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if size_filter %}&size={{ size_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link rounded-pill ms-2" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}{% if size_filter %}&size={{ size_filter }}{% endif %}{% if condition_filter %}&condition={{ condition_filter }}{% endif %}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            {% else %}
+                <!-- No Items Found -->
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-search fa-5x text-muted mb-4"></i>
+                        <h3 class="fw-bold text-dark mb-3">No Items Found</h3>
+                        <p class="text-muted mb-4 lead">
+                            {% if search_query %}
+                                We couldn't find any items matching "<strong>{{ search_query }}</strong>".
+                            {% else %}
+                                No items match your current filters.
+                            {% endif %}
+                        </p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="{% url 'items:browse' %}" class="btn btn-primary btn-lg rounded-pill px-4">
+                                <i class="fas fa-refresh me-2"></i>Browse All Items
+                            </a>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'items:add' %}" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                                <i class="fas fa-plus me-2"></i>List an Item
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="swapMessage" class="form-label fw-bold">Message (Optional)</label>
-                        <textarea class="form-control" id="swapMessage" name="message" rows="3" 
-                                  placeholder="Add a personal message to your swap request..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitQuickSwap()">
-                    <i class="fas fa-paper-plane me-2"></i>Send Request
-                </button>
-            </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
-{% endblock %}
+<!-- Modern CSS Styles -->
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.15);
+}
 
-{% block extra_js %}
+.bg-gradient-primary {
+    background: var(--primary-gradient);
+}
+
+.item-card {
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    border: none;
+}
+
+.item-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.item-image {
+    height: 280px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.placeholder-image {
+    height: 280px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.item-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.item-card:hover .item-overlay {
+    opacity: 1;
+}
+
+.item-card:hover .item-image {
+    transform: scale(1.1);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-bottom: 2px solid #e9ecef;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn {
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.sticky-top {
+    z-index: 10;
+}
+
+.pagination .page-link {
+    border: none;
+    color: #667eea;
+    padding: 10px 15px;
+    margin: 0 3px;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--primary-gradient);
+    border: none;
+}
+
+.empty-state {
+    padding: 80px 0;
+}
+
+.badge {
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .item-card {
+        margin-bottom: 2rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .container-fluid .col-lg-3 {
+        order: 2;
+    }
+    
+    .container-fluid .col-lg-9 {
+        order: 1;
+    }
+}
+
+/* Grid/List view styles */
+#itemsGrid.list-view .item-card {
+    display: flex;
+    flex-direction: row;
+    height: 200px;
+}
+
+#itemsGrid.list-view .item-image,
+#itemsGrid.list-view .placeholder-image {
+    width: 250px;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+#itemsGrid.list-view .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-submit form on filter change
+    // Auto-submit form on filter change with debouncing
     const filterForm = document.getElementById('filterForm');
     const filterInputs = filterForm.querySelectorAll('select, input');
     
@@ -349,147 +445,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const listViewBtn = document.getElementById('listView');
     const itemsGrid = document.getElementById('itemsGrid');
     
-    listViewBtn.addEventListener('click', function() {
-        gridViewBtn.classList.remove('active');
-        this.classList.add('active');
-        itemsGrid.classList.remove('row');
-        itemsGrid.classList.add('list-view');
-        
-        // Update item wrappers for list view
-        const itemWrappers = document.querySelectorAll('.item-wrapper');
-        itemWrappers.forEach(wrapper => {
-            wrapper.className = 'col-12 item-wrapper mb-3';
-        });
-    });
-    
-    gridViewBtn.addEventListener('click', function() {
-        listViewBtn.classList.remove('active');
-        this.classList.add('active');
-        itemsGrid.classList.add('row');
-        itemsGrid.classList.remove('list-view');
-        
-        // Update item wrappers for grid view
-        const itemWrappers = document.querySelectorAll('.item-wrapper');
-        itemWrappers.forEach(wrapper => {
-            wrapper.className = 'col-lg-3 col-md-6 item-wrapper';
-        });
-    });
-    
-    // Handle swap type radio buttons
-    const swapTypeRadios = document.querySelectorAll('input[name="swap_type"]');
-    const itemSelectionDiv = document.getElementById('itemSelectionDiv');
-    
-    swapTypeRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.value === 'direct') {
-                itemSelectionDiv.style.display = 'block';
-            } else {
-                itemSelectionDiv.style.display = 'none';
-            }
-        });
-    });
-});
-
-function quickSwap(itemId) {
-    document.getElementById('swapItemId').value = itemId;
-    
-    // Load user's available items for swap
-    fetch(`/api/user-items/`)
-        .then(response => response.json())
-        .then(data => {
-            const select = document.getElementById('offeredItem');
-            select.innerHTML = '<option value="">Choose an item...</option>';
+    if (gridViewBtn && listViewBtn && itemsGrid) {
+        listViewBtn.addEventListener('click', function() {
+            gridViewBtn.classList.remove('active');
+            this.classList.add('active');
+            itemsGrid.classList.add('list-view');
             
-            data.items.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.id;
-                option.textContent = `${item.title} (${item.points} pts)`;
-                select.appendChild(option);
+            // Update item wrappers for list view
+            const itemWrappers = document.querySelectorAll('.col-lg-4');
+            itemWrappers.forEach(wrapper => {
+                wrapper.className = 'col-12 mb-3';
             });
-        })
-        .catch(error => {
-            console.error('Error loading items:', error);
-            showNotification('Error loading your items. Please try again.', 'danger');
         });
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('quickSwapModal'));
-    modal.show();
-}
-
-function submitQuickSwap() {
-    const form = document.getElementById('quickSwapForm');
-    const formData = new FormData(form);
-    
-    // Basic validation
-    const swapType = formData.get('swap_type');
-    if (swapType === 'direct' && !formData.get('offered_item')) {
-        showNotification('Please select an item to offer for the swap.', 'warning');
-        return;
+        
+        gridViewBtn.addEventListener('click', function() {
+            listViewBtn.classList.remove('active');
+            this.classList.add('active');
+            itemsGrid.classList.remove('list-view');
+            
+            // Update item wrappers for grid view
+            const itemWrappers = document.querySelectorAll('.col-12');
+            itemWrappers.forEach(wrapper => {
+                wrapper.className = 'col-lg-4 col-md-6';
+            });
+        });
     }
     
-    // Submit the swap request
-    fetch('/swaps/create/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('Swap request sent successfully!', 'success');
-            bootstrap.Modal.getInstance(document.getElementById('quickSwapModal')).hide();
-        } else {
-            showNotification(data.error || 'Error sending swap request.', 'danger');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error sending swap request. Please try again.', 'danger');
+    // Smooth scrolling for pagination
+    const paginationLinks = document.querySelectorAll('.pagination .page-link');
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
     });
-}
-
-// Infinite scroll for better UX (optional)
-let loading = false;
-let page = 2;
-
-function loadMoreItems() {
-    if (loading) return;
-    
-    loading = true;
-    const params = new URLSearchParams(window.location.search);
-    params.set('page', page);
-    
-    fetch(`${window.location.pathname}?${params.toString()}`)
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newItems = doc.querySelectorAll('.item-wrapper');
-            
-            if (newItems.length > 0) {
-                const itemsGrid = document.getElementById('itemsGrid');
-                newItems.forEach(item => {
-                    itemsGrid.appendChild(item);
-                });
-                page++;
-            }
-            
-            loading = false;
-        })
-        .catch(error => {
-            console.error('Error loading more items:', error);
-            loading = false;
-        });
-}
-
-// Auto-load more items when scrolling near bottom
-window.addEventListener('scroll', function() {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
-        loadMoreItems();
-    }
 });
 </script>
 {% endblock %}

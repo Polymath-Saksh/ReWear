@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.contrib.auth.models import User
 from rest_framework import generics
 from .models import SiteSetting, ContactMessage
 from .serializers import SiteSettingSerializer, ContactMessageSerializer
@@ -13,11 +14,16 @@ class LandingPageView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add any context data for the landing page
-        context['featured_items'] = []  # Will be populated later
-        context['total_users'] = 0  # Will be populated later
-        context['total_swaps'] = 0  # Will be populated later
-        context['items_saved'] = 0  # Will be populated later
+        
+        # Import models inside method to avoid circular imports
+        from items.models import Item
+        from swaps.models import Swap
+        
+        # Get dynamic statistics
+        context['total_items'] = Item.objects.filter(is_approved=True, is_available=True).count()
+        context['total_users'] = User.objects.filter(is_superuser=False).count()  # Exclude admin users
+        context['total_swaps'] = Swap.objects.filter(status='completed').count()
+        
         return context
 
 # API Views

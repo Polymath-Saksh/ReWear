@@ -169,3 +169,36 @@ AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', 'your_azure_account_name')
 AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY', 'your_azure_account_key')
 AZURE_CONTAINER = os.getenv('AZURE_CONTAINER', 'your_azure_container')
 MEDIA_URL = os.getenv('MEDIA_URL', f'https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER}/')
+
+# Azure Communication Services Configuration
+AZURE_COMMUNICATION_CONNECTION_STRING = os.getenv('AZURE_COMMUNICATION_CONNECTION_STRING')
+AZURE_COMMUNICATION_SENDER_EMAIL = os.getenv('AZURE_COMMUNICATION_SENDER_EMAIL')
+
+# Email Backend Configuration for Django
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = AZURE_COMMUNICATION_SENDER_EMAIL
+
+# Password Reset Settings
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days in seconds
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'users.email_service': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

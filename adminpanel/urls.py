@@ -4,8 +4,13 @@ from . import views
 app_name = 'adminpanel'
 
 urlpatterns = [
-    path('items/pending/', views.PendingItemListView.as_view(), name='pending-items'),
-    path('items/<int:pk>/approve/', views.ApproveItemView.as_view(), name='approve-item'),
-    path('items/<int:pk>/reject/', views.RejectItemView.as_view(), name='reject-item'),
-    path('users/', views.UserListView.as_view(), name='user-list'),
+    # Admin Panel Web Views
+    path('', views.admin_dashboard_view, name='dashboard'),  # Main admin panel
+    path('login/', views.admin_login_view, name='login'),
+    path('logout/', views.admin_logout_view, name='logout'),
+    path('dashboard/', views.admin_dashboard_view, name='dashboard'),
+    
+    # API Endpoints for item management
+    path('api/items/pending/', views.PendingItemListView.as_view(), name='pending-items'),
+    path('api/items/<int:pk>/approve/', views.ApproveItemView.as_view(), name='approve-item'),
 ]

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .swaps-container {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 80vh;
+    }
+    
+    .swaps-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .swap-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .swap-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .swap-status {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-accepted {
+        background: #d1edff;
+        color: #0c5460;
+    }
+    
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .empty-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="swaps-container">
+    <div class="container">
+        <!-- Header -->
+        <div class="swaps-header">
+            <h2 class="mb-2">My Swaps</h2>
+            <p class="mb-0 opacity-75">Track all your swap activities and exchanges</p>
+        </div>
+
+        {% if swaps %}
+            <!-- Swaps List -->
+            <div class="row">
+                {% for swap in swaps %}
+                <div class="col-12">
+                    <div class="swap-card">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <div class="text-center">
+                                        <i class="fas fa-exchange-alt fa-2x text-primary mb-2"></i>
+                                        <div class="small text-muted">Swap #{{ swap.id }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <h5 class="mb-1">{{ swap.item.title }}</h5>
+                                    <p class="text-muted mb-1">
+                                        {% if swap.requester == user %}
+                                            You requested this item from {{ swap.item.owner.username }}
+                                        {% else %}
+                                            {{ swap.requester.username }} requested your item
+                                        {% endif %}
+                                    </p>
+                                    <div class="small text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Created {{ swap.created_at|date:"M d, Y" }}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-2 text-center">
+                                    <div class="swap-status status-{{ swap.status }}">
+                                        {{ swap.get_status_display }}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-2 text-end">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        {% if swap.status == 'pending' and swap.item.owner == user %}
+                                        <button type="button" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h4>No swaps yet</h4>
+                <p class="text-muted mb-4">You haven't made any swap requests yet. Start by browsing items and requesting swaps!</p>
+                <a href="{% url 'items:browse' %}" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Browse Items
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

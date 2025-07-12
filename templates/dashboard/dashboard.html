@@ -19,8 +19,8 @@
                     <div class="col-md-4 text-md-end">
                         <div class="d-flex flex-column align-items-md-end">
                             <div class="badge bg-white text-primary p-3 rounded-pill mb-2">
-                                <i class="fas fa-coins me-2"></i>
-                                <span class="fw-bold fs-5">{{ user.profile.points|default:0 }} Points</span>
+                                <i class="fas fa-leaf me-2"></i>
+                                <span class="fw-bold fs-5">Eco Warrior</span>
                             </div>
                             <a href="{% url 'items:add' %}" class="btn btn-white btn-sm">
                                 <i class="fas fa-plus me-2"></i>List New Item
@@ -102,7 +102,6 @@
                                         <h6 class="card-title fw-bold mb-1">{{ item.title|truncatechars:20 }}</h6>
                                         <p class="card-text text-muted small mb-2">{{ item.description|truncatechars:40 }}</p>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-primary">{{ item.points }} pts</span>
                                             <span class="badge {% if item.is_available %}bg-success{% else %}bg-warning{% endif %}">
                                                 {% if item.is_available %}Available{% else %}Pending{% endif %}
                                             </span>
@@ -232,7 +231,7 @@
                                 </td>
                                 <td>
                                     <span class="badge {% if swap.swap_type == 'direct' %}bg-primary{% else %}bg-info{% endif %}">
-                                        {% if swap.swap_type == 'direct' %}Direct Swap{% else %}Points{% endif %}
+                                        {% if swap.swap_type == 'direct' %}Direct Swap{% else %}Gift{% endif %}
                                     </span>
                                 </td>
                                 <td>

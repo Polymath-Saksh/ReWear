@@ -36,6 +36,75 @@
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
                         
+                        <!-- Basic Information -->
+                        <div class="mb-4">
+                            <h4 class="fw-bold mb-3">
+                                <i class="fas fa-info-circle me-2 text-primary"></i>Basic Information
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label fw-bold">Item Title *</label>
+                                        <input type="text" class="form-control form-control-lg" id="title" name="title" required
+                                               placeholder="e.g., Vintage Denim Jacket">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="point_value" class="form-label fw-bold">Points Value</label>
+                                        <input type="number" class="form-control form-control-lg" id="point_value" name="point_value" 
+                                               value="10" min="1" max="200">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label fw-bold">Description *</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required
+                                          placeholder="Describe your item's condition, style, and any special features..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Category & Details -->
+                        <div class="mb-4">
+                            <h4 class="fw-bold mb-3">
+                                <i class="fas fa-tags me-2 text-primary"></i>Category & Details
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="category" class="form-label fw-bold">Category *</label>
+                                        <select class="form-select form-select-lg" id="category" name="category" required>
+                                            <option value="">Choose category</option>
+                                            {% for value, label in categories %}
+                                            <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="size" class="form-label fw-bold">Size *</label>
+                                        <input type="text" class="form-control form-control-lg" id="size" name="size" required
+                                               placeholder="e.g., M, 32, One Size">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="condition" class="form-label fw-bold">Condition *</label>
+                                        <select class="form-select form-select-lg" id="condition" name="condition" required>
+                                            <option value="">Select condition</option>
+                                            {% for value, label in conditions %}
+                                            <option value="{{ value }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Image Upload Section -->
                         <div class="mb-5">
                             <h4 class="fw-bold mb-3">

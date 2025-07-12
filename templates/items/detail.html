@@ -39,7 +39,6 @@
                     <div>
                         <h1 class="display-6 fw-bold mb-2">{{ item.title }}</h1>
                         <div class="d-flex align-items-center gap-3">
-                            <span class="badge bg-primary fs-6 px-3 py-2">{{ item.points }} Points</span>
                             <span class="badge {% if item.is_available %}bg-success{% else %}bg-warning{% endif %} fs-6 px-3 py-2">
                                 {% if item.is_available %}
                                     <i class="fas fa-check-circle me-1"></i>Available
@@ -148,9 +147,6 @@
                 <button class="btn btn-primary btn-lg" onclick="openSwapModal()">
                     <i class="fas fa-exchange-alt me-2"></i>Request Swap
                 </button>
-                <button class="btn btn-success btn-lg" onclick="redeemWithPoints()">
-                    <i class="fas fa-coins me-2"></i>Redeem with Points ({{ item.points }} pts)
-                </button>
             </div>
             {% elif not user.is_authenticated %}
             <div class="alert alert-info d-flex align-items-center">
@@ -220,7 +216,9 @@
                             <h6 class="card-title fw-bold">{{ related_item.title|truncatechars:20 }}</h6>
                             <p class="card-text text-muted small">{{ related_item.description|truncatewords:8 }}</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="item-price">{{ related_item.points }} pts</div>
+                                <div class="item-category">
+                                    <span class="badge bg-secondary">{{ related_item.category|title }}</span>
+                                </div>
                                 <a href="{% url 'items:detail' related_item.id %}" class="btn btn-outline-primary btn-sm">
                                     View Details
                                 </a>
@@ -275,18 +273,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card border-2" id="pointsSwapCard">
-                                    <div class="card-body text-center">
-                                        <input type="radio" name="swap_type" value="points" id="pointsSwapRadio">
-                                        <label for="pointsSwapRadio" class="d-block mt-2">
-                                            <i class="fas fa-coins fa-2x text-warning mb-2"></i>
-                                            <h6 class="fw-bold">Use Points</h6>
-                                            <small class="text-muted">Redeem using {{ item.points }} points</small>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     
@@ -301,18 +287,7 @@
                         </small>
                     </div>
                     
-                    <div class="mb-3" id="pointsSection" style="display: none;">
-                        <div class="alert alert-info d-flex align-items-center">
-                            <i class="fas fa-info-circle me-3"></i>
-                            <div>
-                                You have <strong>{{ user.profile.points|default:0 }} points</strong> available.
-                                This item costs <strong>{{ item.points }} points</strong>.
-                                {% if user.profile.points|default:0 < item.points %}
-                                <br><span class="text-danger">You need {{ item.points|sub:user.profile.points|default:item.points }} more points for this item.</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+
                     
                     <div class="mb-3">
                         <label for="swapMessage" class="form-label fw-bold">Message to Owner</label>
@@ -338,11 +313,10 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Swap type selection
-    const swapTypeCards = document.querySelectorAll('#directSwapCard, #pointsSwapCard');
+    // Swap type selection - simplified for direct swaps only
+    const swapTypeCards = document.querySelectorAll('#directSwapCard');
     const swapTypeRadios = document.querySelectorAll('input[name="swap_type"]');
     const itemSelectionSection = document.getElementById('itemSelectionSection');
-    const pointsSection = document.getElementById('pointsSection');
     
     // Handle swap type card clicks
     swapTypeCards.forEach(card => {
@@ -367,15 +341,9 @@ document.addEventListener('DOMContentLoaded', function() {
             card.classList.add('border-2');
         });
         
-        if (selectedType === 'direct') {
-            document.getElementById('directSwapCard').classList.add('border-primary');
-            itemSelectionSection.style.display = 'block';
-            pointsSection.style.display = 'none';
-        } else {
-            document.getElementById('pointsSwapCard').classList.add('border-primary');
-            itemSelectionSection.style.display = 'none';
-            pointsSection.style.display = 'block';
-        }
+        // Only direct swaps are supported
+        document.getElementById('directSwapCard').classList.add('border-primary');
+        itemSelectionSection.style.display = 'block';
     }
     
     // Initialize UI
@@ -422,15 +390,6 @@ function submitSwapRequest() {
         return;
     }
     
-    if (swapType === 'points') {
-        const userPoints = {{ user.profile.points|default:0 }};
-        const itemPoints = {{ item.points }};
-        if (userPoints < itemPoints) {
-            showNotification('You don\'t have enough points for this item.', 'warning');
-            return;
-        }
-    }
-    
     // Submit request
     fetch('/swaps/create/', {
         method: 'POST',
@@ -457,43 +416,6 @@ function submitSwapRequest() {
         console.error('Error:', error);
         showNotification('Error sending swap request. Please try again.', 'danger');
     });
-}
-
-function redeemWithPoints() {
-    const userPoints = {{ user.profile.points|default:0 }};
-    const itemPoints = {{ item.points }};
-    
-    if (userPoints < itemPoints) {
-        showNotification('You don\'t have enough points for this item.', 'warning');
-        return;
-    }
-    
-    if (confirm(`Are you sure you want to redeem this item for ${itemPoints} points?`)) {
-        const formData = new FormData();
-        formData.append('item_id', {{ item.id }});
-        formData.append('swap_type', 'points');
-        formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
-        
-        fetch('/swaps/create/', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification('Item successfully redeemed!', 'success');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            } else {
-                showNotification(data.error || 'Error redeeming item.', 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error redeeming item. Please try again.', 'danger');
-        });
-    }
 }
 
 function deleteItem() {
