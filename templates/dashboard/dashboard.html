@@ -13,7 +13,8 @@
                     <div class="col-md-8">
                         <h2 class="fw-bold mb-2">Welcome back, {{ user.first_name|default:user.username }}! 👋</h2>
                         <p class="mb-0 opacity-75">
-                            You've made {{ user.profile.successful_swaps|default:0 }} successful swaps and saved {{ user.profile.items_saved|default:0 }} items from landfill!
+                            You've made {{ user.profile.successful_swaps|default:0 }} successful swaps and saved {{
+                            user.profile.items_saved|default:0 }} items from landfill!
                         </p>
                     </div>
                     <div class="col-md-4 text-md-end">
@@ -31,7 +32,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Stats Cards -->
     <div class="row g-4 mb-5">
         <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
@@ -71,7 +72,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Main Content -->
     <div class="row g-4">
         <!-- Recent Items -->
@@ -85,7 +86,7 @@
                         <i class="fas fa-eye me-2"></i>View All
                     </a>
                 </div>
-                
+
                 {% if user_items %}
                 <div class="row g-3">
                     {% for item in user_items|slice:":4" %}
@@ -93,16 +94,18 @@
                         <div class="card border-0 shadow-sm h-100">
                             <div class="row g-0">
                                 <div class="col-4">
-                                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/100x100?text=No+Image{% endif %}" 
-                                         class="img-fluid rounded-start h-100" 
-                                         style="object-fit: cover;" alt="{{ item.title }}">
+                                    <img src="{% if item.images.first and item.images.first.azure_file_url %}{{ item.images.first.azure_file_url }}{% else %}https://via.placeholder.com/100x100?text=No+Image{% endif %}"
+                                        class="img-fluid rounded-start h-100" style="object-fit: cover;"
+                                        alt="{{ item.title }}">
                                 </div>
                                 <div class="col-8">
                                     <div class="card-body p-3">
                                         <h6 class="card-title fw-bold mb-1">{{ item.title|truncatechars:20 }}</h6>
-                                        <p class="card-text text-muted small mb-2">{{ item.description|truncatechars:40 }}</p>
+                                        <p class="card-text text-muted small mb-2">{{ item.description|truncatechars:40
+                                            }}</p>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge {% if item.is_available %}bg-success{% else %}bg-warning{% endif %}">
+                                            <span
+                                                class="badge {% if item.is_available %}bg-success{% else %}bg-warning{% endif %}">
                                                 {% if item.is_available %}Available{% else %}Pending{% endif %}
                                             </span>
                                         </div>
@@ -125,7 +128,7 @@
                 {% endif %}
             </div>
         </div>
-        
+
         <!-- Quick Actions & Recent Activity -->
         <div class="col-lg-4">
             <!-- Quick Actions -->
@@ -148,20 +151,21 @@
                     </a>
                 </div>
             </div>
-            
+
             <!-- Recent Activity -->
             <div class="dashboard-card" data-aos="fade-left" data-aos-delay="100">
                 <h5 class="fw-bold mb-4">
                     <i class="fas fa-clock me-2 text-info"></i>Recent Activity
                 </h5>
-                
+
                 {% if recent_activities %}
                 <div class="activity-feed">
                     {% for activity in recent_activities|slice:":5" %}
                     <div class="activity-item d-flex align-items-start mb-3 pb-3 border-bottom">
                         <div class="activity-icon me-3">
                             <div class="avatar-circle" style="width: 40px; height: 40px;">
-                                <i class="fas {% if activity.type == 'swap' %}fa-exchange-alt{% elif activity.type == 'item' %}fa-plus{% elif activity.type == 'like' %}fa-heart{% else %}fa-bell{% endif %}"></i>
+                                <i
+                                    class="fas {% if activity.type == 'swap' %}fa-exchange-alt{% elif activity.type == 'item' %}fa-plus{% elif activity.type == 'like' %}fa-heart{% else %}fa-bell{% endif %}"></i>
                             </div>
                         </div>
                         <div class="activity-content flex-grow-1">
@@ -181,7 +185,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Recent Swaps -->
     <div class="row mt-4">
         <div class="col-12">
@@ -194,7 +198,7 @@
                         <i class="fas fa-eye me-2"></i>View All Swaps
                     </a>
                 </div>
-                
+
                 {% if recent_swaps %}
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -213,8 +217,8 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img src="{% if swap.item.image %}{{ swap.item.image.url }}{% else %}https://via.placeholder.com/40x40?text=No+Image{% endif %}" 
-                                             class="rounded me-2" width="40" height="40" style="object-fit: cover;">
+                                        <img src="{% if swap.item.images.first and swap.item.images.first.azure_file_url %}{{ swap.item.images.first.azure_file_url }}{% else %}https://via.placeholder.com/40x40?text=No+Image{% endif %}"
+                                            class="rounded me-2" width="40" height="40" style="object-fit: cover;">
                                         <div>
                                             <div class="fw-bold">{{ swap.item.title|truncatechars:20 }}</div>
                                             <small class="text-muted">{{ swap.item.category }}</small>
@@ -230,12 +234,14 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge {% if swap.swap_type == 'direct' %}bg-primary{% else %}bg-info{% endif %}">
+                                    <span
+                                        class="badge {% if swap.swap_type == 'direct' %}bg-primary{% else %}bg-info{% endif %}">
                                         {% if swap.swap_type == 'direct' %}Direct Swap{% else %}Gift{% endif %}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge {% if swap.status == 'completed' %}bg-success{% elif swap.status == 'pending' %}bg-warning{% elif swap.status == 'accepted' %}bg-info{% else %}bg-danger{% endif %}">
+                                    <span
+                                        class="badge {% if swap.status == 'completed' %}bg-success{% elif swap.status == 'pending' %}bg-warning{% elif swap.status == 'accepted' %}bg-info{% else %}bg-danger{% endif %}">
                                         {{ swap.get_status_display }}
                                     </span>
                                 </td>
@@ -268,23 +274,23 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add hover effects to stats cards
-    const statCards = document.querySelectorAll('.dashboard-card');
-    statCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add hover effects to stats cards
+        const statCards = document.querySelectorAll('.dashboard-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-5px)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+            });
         });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
+
+        // Auto-refresh dashboard every 5 minutes
+        setTimeout(function () {
+            window.location.reload();
+        }, 300000); // 5 minutes
     });
-    
-    // Auto-refresh dashboard every 5 minutes
-    setTimeout(function() {
-        window.location.reload();
-    }, 300000); // 5 minutes
-});
 </script>
 {% endblock %}
