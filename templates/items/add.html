@@ -151,11 +151,9 @@
                                     </label>
                                     <div class="input-group input-group-lg">
                                         <input type="number" class="form-control" id="{{ form.points.id_for_label }}"
-                                            name="{{ form.points.name }}" value="{{ form.points.value|default:'' }}"
-                                            min="10" max="500" step="10" required>
+                                            name="{{ form.points.name }}" value="{{ form.points.value|default:'' }}">
                                         <span class="input-group-text">points</span>
                                     </div>
-                                    <div class="form-text">Suggested: 50-150 points for most items</div>
                                 </div>
 
                                 <div class="col-md-6">
