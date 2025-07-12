@@ -25,6 +25,25 @@ Watch a demonstration of ReWear on YouTube:
 
 ---
 
+## 🖼️ Screenshots
+
+Below are some screenshots of the ReWear UI:
+
+<table>
+  <tr>
+    <td><img src="ss/img1.png" alt="Screenshot 1" width="200"/></td>
+    <td><img src="ss/img2.png" alt="Screenshot 2" width="200"/></td>
+    <td><img src="ss/img3.png" alt="Screenshot 3" width="200"/></td>
+  </tr>
+  <tr>
+    <td><img src="ss/img4.png" alt="Screenshot 4" width="200"/></td>
+    <td><img src="ss/img5.png" alt="Screenshot 5" width="200"/></td>
+    <td><!-- Add more images as needed --></td>
+  </tr>
+</table>
+
+---
+
 ## 🌱 Problem Statement
 
 **ReWear – Community Clothing Exchange**
