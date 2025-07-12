@@ -34,7 +34,7 @@ class Item(models.Model):
 
 class ItemImage(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='item_images/')
+    azure_file_url = models.URLField(blank=True, null=True)  # Store Azure file URL
     is_primary = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

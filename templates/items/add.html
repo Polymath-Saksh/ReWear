@@ -97,8 +97,8 @@
                                     </label>
                                     <input type="text" class="form-control form-control-lg"
                                         id="{{ form.size.id_for_label }}" name="{{ form.size.name }}"
-                                        value="{{ form.size.value|default:'' }}"
-                                        placeholder="e.g., S, M, L, XL, 32, 10" required>
+                                        value="{{ form.size.value|default:'' }}" placeholder="e.g., S, M, L, XL, 32, 10"
+                                        required>
                                     <div class="form-text">Standard size or measurements</div>
                                 </div>
 
@@ -120,18 +120,17 @@
                                 swap success!</p>
 
                             <div class="upload-area border-2 border-dashed rounded-custom p-4 text-center"
-                                onclick="document.getElementById('{{ form.image.id_for_label }}').click()">
+                                onclick="document.getElementById('images').click()">
                                 <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                                <h5 class="fw-bold text-muted">Click to upload photos</h5>
+                                <h5 class="fw-bold text-muted">Click to upload photo</h5>
                                 <p class="text-muted mb-0">
-                                    Drag and drop files here or click to browse<br>
-                                    <small>Supported: JPG, PNG, GIF (Max 5MB each)</small>
+                                    Drag and drop file here or click to browse<br>
+                                    <small>Supported: JPG, PNG, GIF (Max 5MB)</small>
                                 </p>
-                                <input type="file" class="d-none" id="{{ form.image.id_for_label }}"
-                                    name="{{ form.image.name }}" accept="image/*" multiple>
+                                <input type="file" class="d-none" id="images" name="images" accept="image/*">
                                 <button type="button" class="btn btn-outline-primary mt-3"
-                                    onclick="document.getElementById('{{ form.image.id_for_label }}').click(); event.stopPropagation();">
-                                    <i class="fas fa-upload me-2"></i>Choose Photos
+                                    onclick="document.getElementById('images').click(); event.stopPropagation();">
+                                    <i class="fas fa-upload me-2"></i>Choose Photo
                                 </button>
                             </div>
 
@@ -146,14 +145,17 @@
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="{{ form.points.id_for_label }}" class="form-label fw-bold">
+                                    <label for="{{ form.point_value.id_for_label }}" class="form-label fw-bold">
                                         Point Value <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group input-group-lg">
-                                        <input type="number" class="form-control" id="{{ form.points.id_for_label }}"
-                                            name="{{ form.points.name }}" value="{{ form.points.value|default:'' }}">
+                                        <input type="number" class="form-control"
+                                            id="{{ form.point_value.id_for_label }}" name="{{ form.point_value.name }}"
+                                            value="{{ form.point_value.value|default:'' }}" min="10" max="500" step="10"
+                                            required>
                                         <span class="input-group-text">points</span>
                                     </div>
+                                    <div class="form-text">Suggested: 50-150 points for most items</div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -221,7 +223,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // File upload handling
-        const fileInput = document.getElementById('{{ form.image.id_for_label }}');
+        const fileInput = document.getElementById('images');
         const uploadArea = document.querySelector('.upload-area');
         const imagePreview = document.getElementById('imagePreview');
 
@@ -254,33 +256,31 @@
 
         function handleFilePreview(files) {
             imagePreview.innerHTML = '';
-
-            Array.from(files).slice(0, 5).forEach((file, index) => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const div = document.createElement('div');
-                        div.className = 'd-inline-block position-relative me-2 mb-2';
-                        div.innerHTML = `
+            const file = files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const div = document.createElement('div');
+                    div.className = 'd-inline-block position-relative me-2 mb-2';
+                    div.innerHTML = `
                         <img src="${e.target.result}" class="img-thumbnail" 
                              style="width: 100px; height: 100px; object-fit: cover;">
                         <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle" 
                                 style="width: 25px; height: 25px; padding: 0; font-size: 0.7rem;"
-                                onclick="this.parentElement.remove()">
+                                onclick="this.parentElement.remove(); fileInput.value = '';">
                             <i class="fas fa-times"></i>
                         </button>
                     `;
-                        imagePreview.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+                    imagePreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Auto-calculate suggested points based on category and condition
         const categorySelect = document.getElementById('{{ form.category.id_for_label }}');
         const conditionSelect = document.getElementById('{{ form.condition.id_for_label }}');
-        const pointsInput = document.getElementById('{{ form.points.id_for_label }}');
+        const pointsInput = document.getElementById('{{ form.point_value.id_for_label }}');
 
         function calculateSuggestedPoints() {
             const category = categorySelect.value;

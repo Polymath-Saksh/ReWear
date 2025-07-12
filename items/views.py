@@ -11,6 +11,23 @@ from .models import Item, ItemImage
 from .forms import ItemForm
 from .serializers import ItemSerializer, ItemImageSerializer
 from rest_framework.permissions import IsAuthenticated
+from azure.storage.blob import BlobServiceClient
+from django.conf import settings
+
+def upload_to_azure_blob(file_obj, filename):
+    # Use Blob Storage instead of File Share
+    account_name = settings.AZURE_ACCOUNT_NAME
+    account_key = settings.AZURE_ACCOUNT_KEY
+    container_name = settings.AZURE_CONTAINER
+
+    blob_service_client = BlobServiceClient(
+        account_url=f"https://{account_name}.blob.core.windows.net",
+        credential=account_key
+    )
+    container_client = blob_service_client.get_container_client(container_name)
+    blob_client = container_client.get_blob_client(f"item_images/{filename}")
+    blob_client.upload_blob(file_obj, overwrite=True)
+    return blob_client.url
 
 # Web Views for Templates
 def browse_items_view(request):
@@ -82,7 +99,6 @@ def item_detail_view(request, item_id):
     return render(request, 'items/detail.html', context)
 
 @login_required
-@login_required
 def add_item_view(request):
     """Add new item form"""
     if request.method == 'POST':
@@ -92,6 +108,12 @@ def add_item_view(request):
             item.owner = request.user
             item.is_approved = True  # Auto-approve for hackathon
             item.save()
+            
+            # Handle single image upload
+            image = request.FILES.get('images')
+            if image:
+                azure_url = upload_to_azure_blob(image, image.name)
+                ItemImage.objects.create(item=item, azure_file_url=azure_url)
             
             messages.success(request, 'Item listed successfully!')
             return redirect('items:detail', item_id=item.pk)

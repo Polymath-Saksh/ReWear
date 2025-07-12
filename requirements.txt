@@ -15,6 +15,7 @@ django-storages[azure]==1.14.6
 azure-storage-blob==12.25.1
 azure-core==1.35.0
 azure-communication-email==1.0.0
+azure-storage-file-share
 
 # Environment and Utils
 python-dotenv==1.1.1

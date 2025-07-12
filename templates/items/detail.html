@@ -19,15 +19,26 @@
         <div class="col-lg-6" data-aos="fade-right">
             <div class="position-sticky" style="top: 100px;">
                 <div class="image-gallery rounded-custom overflow-hidden shadow-lg mb-3">
-                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/600x600?text=No+Image{% endif %}" 
+                    <img src="{% if item.images.first and item.images.first.azure_file_url %}
+                                {{ item.images.first.azure_file_url }}
+                             {% elif item.image %}
+                                {{ item.image.url }}
+                             {% else %}
+                                https://via.placeholder.com/600x600?text=No+Image
+                             {% endif %}" 
                          class="main-image w-100" id="mainImage" alt="{{ item.title }}">
                 </div>
                 
                 <!-- Thumbnail Gallery (if multiple images) -->
                 <div class="d-flex gap-2 overflow-auto">
-                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/100x100?text=No+Image{% endif %}" 
-                         class="gallery-thumb rounded shadow-sm active" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
-                    <!-- Additional images would go here -->
+                    {% for img in item.images.all %}
+                        <img src="{{ img.azure_file_url }}" 
+                             class="gallery-thumb rounded shadow-sm {% if forloop.first %}active{% endif %}" 
+                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+                    {% empty %}
+                        <img src="https://via.placeholder.com/100x100?text=No+Image" 
+                             class="gallery-thumb rounded shadow-sm active" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+                    {% endfor %}
                 </div>
             </div>
         </div>

@@ -3,6 +3,11 @@ from .models import Item
 
 class ItemForm(forms.ModelForm):
     """Form for creating and editing items"""
+    images = forms.FileField(
+        widget=forms.FileInput(attrs={'accept': 'image/*'}),
+        required=False,
+        label='Item Photo'
+    )
     
     class Meta:
         model = Item
@@ -35,7 +40,11 @@ class ItemForm(forms.ModelForm):
             }),
             'point_value': forms.NumberInput(attrs={
                 'class': 'form-control form-control-lg',
-                'placeholder': 'Enter point value'
+                'placeholder': 'Enter point value',
+                'required': True,  # Ensure HTML required attribute
+                'min': 10,
+                'max': 500,
+                'step': 10
             }),
             'is_available': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
