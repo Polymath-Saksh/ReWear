@@ -1,2 +1,6 @@
 djangorestframework
 django-cors-headers
+django-allauth
+psycopg2
+django-storages[azure]
+python-dotenv
