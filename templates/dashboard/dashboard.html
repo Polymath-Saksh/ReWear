@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - ReWear{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-gradient-primary text-white rounded-custom p-4" data-aos="fade-down">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="fw-bold mb-2">Welcome back, {{ user.first_name|default:user.username }}! 👋</h2>
+                        <p class="mb-0 opacity-75">
+                            You've made {{ user.profile.successful_swaps|default:0 }} successful swaps and saved {{ user.profile.items_saved|default:0 }} items from landfill!
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="d-flex flex-column align-items-md-end">
+                            <div class="badge bg-white text-primary p-3 rounded-pill mb-2">
+                                <i class="fas fa-coins me-2"></i>
+                                <span class="fw-bold fs-5">{{ user.profile.points|default:0 }} Points</span>
+                            </div>
+                            <a href="{% url 'items:add' %}" class="btn btn-white btn-sm">
+                                <i class="fas fa-plus me-2"></i>List New Item
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ user_items.count|default:0 }}</div>
+                <div class="dashboard-stat-label">Listed Items</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ active_swaps.count|default:0 }}</div>
+                <div class="dashboard-stat-label">Active Swaps</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ completed_swaps.count|default:0 }}</div>
+                <div class="dashboard-stat-label">Completed Swaps</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ wishlist_items.count|default:0 }}</div>
+                <div class="dashboard-stat-label">Wishlist Items</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="row g-4">
+        <!-- Recent Items -->
+        <div class="col-lg-8">
+            <div class="dashboard-card" data-aos="fade-right">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">
+                        <i class="fas fa-tshirt me-2 text-primary"></i>Your Recent Items
+                    </h4>
+                    <a href="{% url 'items:my_items' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye me-2"></i>View All
+                    </a>
+                </div>
+                
+                {% if user_items %}
+                <div class="row g-3">
+                    {% for item in user_items|slice:":4" %}
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/100x100?text=No+Image{% endif %}" 
+                                         class="img-fluid rounded-start h-100" 
+                                         style="object-fit: cover;" alt="{{ item.title }}">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title fw-bold mb-1">{{ item.title|truncatechars:20 }}</h6>
+                                        <p class="card-text text-muted small mb-2">{{ item.description|truncatechars:40 }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-primary">{{ item.points }} pts</span>
+                                            <span class="badge {% if item.is_available %}bg-success{% else %}bg-warning{% endif %}">
+                                                {% if item.is_available %}Available{% else %}Pending{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-plus-circle fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted mb-3">No items listed yet</h5>
+                    <p class="text-muted mb-4">Start your sustainable journey by listing your first item!</p>
+                    <a href="{% url 'items:add' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>List Your First Item
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Quick Actions & Recent Activity -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="dashboard-card mb-4" data-aos="fade-left">
+                <h5 class="fw-bold mb-4">
+                    <i class="fas fa-bolt me-2 text-warning"></i>Quick Actions
+                </h5>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'items:add' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>List New Item
+                    </a>
+                    <a href="{% url 'items:browse' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-2"></i>Browse Items
+                    </a>
+                    <a href="{% url 'swaps:my_swaps' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-exchange-alt me-2"></i>My Swaps
+                    </a>
+                    <a href="{% url 'dashboard:profile' %}" class="btn btn-outline-info">
+                        <i class="fas fa-user me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="dashboard-card" data-aos="fade-left" data-aos-delay="100">
+                <h5 class="fw-bold mb-4">
+                    <i class="fas fa-clock me-2 text-info"></i>Recent Activity
+                </h5>
+                
+                {% if recent_activities %}
+                <div class="activity-feed">
+                    {% for activity in recent_activities|slice:":5" %}
+                    <div class="activity-item d-flex align-items-start mb-3 pb-3 border-bottom">
+                        <div class="activity-icon me-3">
+                            <div class="avatar-circle" style="width: 40px; height: 40px;">
+                                <i class="fas {% if activity.type == 'swap' %}fa-exchange-alt{% elif activity.type == 'item' %}fa-plus{% elif activity.type == 'like' %}fa-heart{% else %}fa-bell{% endif %}"></i>
+                            </div>
+                        </div>
+                        <div class="activity-content flex-grow-1">
+                            <p class="mb-1 small">{{ activity.description }}</p>
+                            <small class="text-muted">{{ activity.created_at|timesince }} ago</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-clock fa-2x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">No recent activity</p>
+                    <small class="text-muted">Start swapping to see activity here!</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Swaps -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="dashboard-card" data-aos="fade-up">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">
+                        <i class="fas fa-exchange-alt me-2 text-success"></i>Recent Swaps
+                    </h4>
+                    <a href="{% url 'swaps:my_swaps' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-eye me-2"></i>View All Swaps
+                    </a>
+                </div>
+                
+                {% if recent_swaps %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item</th>
+                                <th>Partner</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for swap in recent_swaps|slice:":5" %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{% if swap.item.image %}{{ swap.item.image.url }}{% else %}https://via.placeholder.com/40x40?text=No+Image{% endif %}" 
+                                             class="rounded me-2" width="40" height="40" style="object-fit: cover;">
+                                        <div>
+                                            <div class="fw-bold">{{ swap.item.title|truncatechars:20 }}</div>
+                                            <small class="text-muted">{{ swap.item.category }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        {{ swap.requester.username }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge {% if swap.swap_type == 'direct' %}bg-primary{% else %}bg-info{% endif %}">
+                                        {% if swap.swap_type == 'direct' %}Direct Swap{% else %}Points{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if swap.status == 'completed' %}bg-success{% elif swap.status == 'pending' %}bg-warning{% elif swap.status == 'accepted' %}bg-info{% else %}bg-danger{% endif %}">
+                                        {{ swap.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ swap.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'swaps:detail' swap.id %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted mb-3">No swaps yet</h5>
+                    <p class="text-muted mb-4">Start browsing items to make your first swap!</p>
+                    <a href="{% url 'items:browse' %}" class="btn btn-success">
+                        <i class="fas fa-search me-2"></i>Browse Items
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to stats cards
+    const statCards = document.querySelectorAll('.dashboard-card');
+    statCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Auto-refresh dashboard every 5 minutes
+    setTimeout(function() {
+        window.location.reload();
+    }, 300000); // 5 minutes
+});
+</script>
+{% endblock %}

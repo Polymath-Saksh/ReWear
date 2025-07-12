@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ReWear - Sustainable Fashion Through Community Exchange{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Swap, Share, 
+                        <span class="text-warning">Sustain</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Join the clothing revolution! Exchange unused garments, earn points, 
+                        and help reduce textile waste while discovering unique pieces from our community.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a href="{% url 'items:browse' %}" class="btn btn-white btn-lg">
+                            <i class="fas fa-search me-2"></i>Browse Items
+                        </a>
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'users:signup' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Join Community
+                        </a>
+                        {% else %}
+                        <a href="{% url 'items:add' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-plus me-2"></i>List an Item
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="hero-stats">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <span class="stat-number counter" data-target="2500">0</span>
+                                <span class="stat-label">Active Items</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <span class="stat-number counter" data-target="1200">0</span>
+                                <span class="stat-label">Happy Users</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stat-item">
+                                <span class="stat-number counter" data-target="850">0</span>
+                                <span class="stat-label">Successful Swaps</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5" style="background-color: #f8fafc;">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">How ReWear Works</h2>
+                <p class="lead text-muted">
+                    Three simple steps to start your sustainable fashion journey
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">List Your Items</h4>
+                    <p class="text-muted">
+                        Upload photos and descriptions of clothes you no longer wear. 
+                        Set your swap preferences or point values.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Discover & Swap</h4>
+                    <p class="text-muted">
+                        Browse community items, make swap requests, or use points 
+                        to redeem pieces you love.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Impact Planet</h4>
+                    <p class="text-muted">
+                        Every swap reduces textile waste and carbon footprint. 
+                        Track your environmental impact in your dashboard.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Items Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">Featured Items</h2>
+                <p class="lead text-muted">
+                    Discover amazing pieces shared by our community
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4" id="featuredItems">
+            {% for item in featured_items %}
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter|add:100 }}">
+                <div class="item-card">
+                    <div class="card-img-wrapper">
+                        <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/300x250?text=No+Image{% endif %}" 
+                             class="card-img-top" alt="{{ item.title }}">
+                        <div class="item-category">{{ item.category }}</div>
+                        <div class="item-status">
+                            {% if item.is_available %}
+                                <i class="fas fa-check-circle me-1"></i>Available
+                            {% else %}
+                                <i class="fas fa-clock me-1"></i>Pending
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ item.title }}</h5>
+                        <p class="card-text text-muted">{{ item.description|truncatewords:10 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="item-price">{{ item.points }} pts</div>
+                            <a href="{% url 'items:detail' item.id %}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Placeholder items for demo -->
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="item-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300&h=250&fit=crop" 
+                             class="card-img-top" alt="Vintage Denim Jacket">
+                        <div class="item-category">Jackets</div>
+                        <div class="item-status">
+                            <i class="fas fa-check-circle me-1"></i>Available
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Vintage Denim Jacket</h5>
+                        <p class="card-text text-muted">Classic 90s style denim jacket in excellent condition...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="item-price">150 pts</div>
+                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="item-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300&h=250&fit=crop" 
+                             class="card-img-top" alt="Floral Summer Dress">
+                        <div class="item-category">Dresses</div>
+                        <div class="item-status">
+                            <i class="fas fa-check-circle me-1"></i>Available
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Floral Summer Dress</h5>
+                        <p class="card-text text-muted">Beautiful flowery dress perfect for summer occasions...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="item-price">120 pts</div>
+                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                <div class="item-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&h=250&fit=crop" 
+                             class="card-img-top" alt="Designer Sneakers">
+                        <div class="item-category">Shoes</div>
+                        <div class="item-status">
+                            <i class="fas fa-check-circle me-1"></i>Available
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Designer Sneakers</h5>
+                        <p class="card-text text-muted">Premium sneakers with minimal wear, size 9...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="item-price">200 pts</div>
+                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
+                <div class="item-card">
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1583743814966-8936f37f4ad2?w=300&h=250&fit=crop" 
+                             class="card-img-top" alt="Cozy Knit Sweater">
+                        <div class="item-category">Sweaters</div>
+                        <div class="item-status">
+                            <i class="fas fa-check-circle me-1"></i>Available
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Cozy Knit Sweater</h5>
+                        <p class="card-text text-muted">Soft and warm sweater, perfect for winter days...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="item-price">100 pts</div>
+                            <a href="#" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="{% url 'items:browse' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-th-large me-2"></i>View All Items
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-gradient-primary">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h2 class="text-white fw-bold mb-3">Ready to Start Your Sustainable Journey?</h2>
+                <p class="text-white opacity-75 mb-0 fs-5">
+                    Join thousands of fashion lovers making a positive impact on the planet.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'users:signup' %}" class="btn btn-white btn-lg me-3">
+                    <i class="fas fa-user-plus me-2"></i>Sign Up Free
+                </a>
+                {% else %}
+                <a href="{% url 'items:add' %}" class="btn btn-white btn-lg me-3">
+                    <i class="fas fa-plus me-2"></i>List Your First Item
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Impact Section -->
+<section class="py-5" style="background-color: #f8fafc;">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                <h2 class="display-5 fw-bold mb-3">Our Environmental Impact</h2>
+                <p class="lead text-muted">
+                    Together, we're making a real difference for our planet
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-3 text-center" data-aos="fade-up" data-aos-delay="100">
+                <div class="dashboard-stat-icon bg-success">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="dashboard-stat-number counter" data-target="12500">0</div>
+                <div class="dashboard-stat-label">Items Saved from Landfill</div>
+            </div>
+            <div class="col-md-3 text-center" data-aos="fade-up" data-aos-delay="200">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                    <i class="fas fa-water"></i>
+                </div>
+                <div class="dashboard-stat-number counter" data-target="2800">0</div>
+                <div class="dashboard-stat-label">Gallons of Water Saved</div>
+            </div>
+            <div class="col-md-3 text-center" data-aos="fade-up" data-aos-delay="300">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <div class="dashboard-stat-number counter" data-target="450">0</div>
+                <div class="dashboard-stat-label">CO2 Tons Reduced</div>
+            </div>
+            <div class="col-md-3 text-center" data-aos="fade-up" data-aos-delay="400">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="dashboard-stat-number counter" data-target="98">0</div>
+                <div class="dashboard-stat-label">% User Satisfaction</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Counter animation for hero stats
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counters = entry.target.querySelectorAll('.counter');
+                animateCounters(counters);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    const statsSection = document.querySelector('.hero-stats');
+    if (statsSection) {
+        counterObserver.observe(statsSection);
+    }
+    
+    // Impact section counters
+    const impactSection = document.querySelector('.py-5:last-of-type .container');
+    if (impactSection) {
+        const impactObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.counter');
+                    animateCounters(counters);
+                    impactObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        impactObserver.observe(impactSection);
+    }
+    
+    function animateCounters(counters) {
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const increment = target / 100;
+            let current = 0;
+            
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.textContent = Math.ceil(current).toLocaleString();
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.textContent = target.toLocaleString();
+                }
+            };
+            
+            updateCounter();
+        });
+    }
+});
+</script>
+{% endblock %}

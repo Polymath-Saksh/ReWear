@@ -1,0 +1,725 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Panel - ReWear{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Admin Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-gradient-primary text-white rounded-custom p-4" data-aos="fade-down">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="fw-bold mb-2">
+                            <i class="fas fa-shield-alt me-2"></i>Admin Panel
+                        </h2>
+                        <p class="mb-0 opacity-75">
+                            Monitor and manage the ReWear community platform
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="d-flex flex-column align-items-md-end gap-2">
+                            <span class="badge bg-white text-primary p-2">
+                                <i class="fas fa-clock me-2"></i>Last updated: {{ last_updated|default:"Now" }}
+                            </span>
+                            <button class="btn btn-white btn-sm" onclick="refreshData()">
+                                <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ total_users|default:0 }}</div>
+                <div class="dashboard-stat-label">Total Users</div>
+                <small class="text-success">
+                    <i class="fas fa-arrow-up me-1"></i>+{{ new_users_today|default:0 }} today
+                </small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ total_items|default:0 }}</div>
+                <div class="dashboard-stat-label">Total Items</div>
+                <small class="text-warning">
+                    <i class="fas fa-clock me-1"></i>{{ pending_items|default:0 }} pending approval
+                </small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ total_swaps|default:0 }}</div>
+                <div class="dashboard-stat-label">Total Swaps</div>
+                <small class="text-info">
+                    <i class="fas fa-handshake me-1"></i>{{ completed_swaps|default:0 }} completed
+                </small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <div class="dashboard-stat-number">{{ reported_items|default:0 }}</div>
+                <div class="dashboard-stat-label">Reported Items</div>
+                <small class="text-danger">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Needs attention
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content Tabs -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg rounded-custom" data-aos="fade-up">
+                <div class="card-header bg-white border-0">
+                    <ul class="nav nav-tabs card-header-tabs" id="adminTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#pending" type="button" role="tab">
+                                <i class="fas fa-clock me-2"></i>Pending Approvals 
+                                <span class="badge bg-warning ms-2">{{ pending_items|default:0 }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="reported-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#reported" type="button" role="tab">
+                                <i class="fas fa-flag me-2"></i>Reported Items
+                                <span class="badge bg-danger ms-2">{{ reported_items|default:0 }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="users-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#users" type="button" role="tab">
+                                <i class="fas fa-users me-2"></i>User Management
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#analytics" type="button" role="tab">
+                                <i class="fas fa-chart-bar me-2"></i>Analytics
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-4">
+                    <div class="tab-content" id="adminTabsContent">
+                        <!-- Pending Approvals Tab -->
+                        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Items Pending Approval</h5>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success btn-sm" onclick="approveAll()">
+                                        <i class="fas fa-check-double me-2"></i>Approve All
+                                    </button>
+                                    <select class="form-select form-select-sm" style="width: auto;">
+                                        <option>Filter by category</option>
+                                        <option>All Categories</option>
+                                        <option>Tops</option>
+                                        <option>Bottoms</option>
+                                        <option>Dresses</option>
+                                        <option>Outerwear</option>
+                                        <option>Shoes</option>
+                                        <option>Accessories</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            {% if pending_items_list %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Owner</th>
+                                            <th>Category</th>
+                                            <th>Points</th>
+                                            <th>Submitted</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in pending_items_list %}
+                                        <tr id="item-{{ item.id }}">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/60x60?text=No+Image{% endif %}" 
+                                                         class="rounded me-3" width="60" height="60" style="object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="fw-bold mb-1">{{ item.title }}</h6>
+                                                        <p class="text-muted small mb-0">{{ item.description|truncatechars:50 }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle me-2">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">{{ item.owner.username }}</div>
+                                                        <small class="text-muted">{{ item.owner.email }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">{{ item.get_category_display }}</span>
+                                            </td>
+                                            <td><span class="fw-bold text-primary">{{ item.points }} pts</span></td>
+                                            <td>{{ item.created_at|timesince }} ago</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-success btn-sm" onclick="approveItem({{ item.id }})" 
+                                                            data-bs-toggle="tooltip" title="Approve">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm" onclick="rejectItem({{ item.id }})" 
+                                                            data-bs-toggle="tooltip" title="Reject">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <button class="btn btn-info btn-sm" onclick="viewItemDetails({{ item.id }})" 
+                                                            data-bs-toggle="tooltip" title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                                <h4 class="fw-bold text-muted">All caught up!</h4>
+                                <p class="text-muted">No items pending approval at the moment.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Reported Items Tab -->
+                        <div class="tab-pane fade" id="reported" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Reported Items</h5>
+                                <select class="form-select form-select-sm" style="width: auto;">
+                                    <option>All Reports</option>
+                                    <option>Inappropriate Content</option>
+                                    <option>Misleading Description</option>
+                                    <option>Spam</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            
+                            {% if reported_items_list %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Reported By</th>
+                                            <th>Reason</th>
+                                            <th>Reports</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for report in reported_items_list %}
+                                        <tr id="report-{{ report.id }}">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{% if report.item.image %}{{ report.item.image.url }}{% else %}https://via.placeholder.com/50x50?text=No+Image{% endif %}" 
+                                                         class="rounded me-2" width="50" height="50" style="object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="fw-bold mb-0">{{ report.item.title|truncatechars:30 }}</h6>
+                                                        <small class="text-muted">by {{ report.item.owner.username }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ report.reported_by.username }}</td>
+                                            <td>
+                                                <span class="badge bg-warning">{{ report.reason }}</span>
+                                            </td>
+                                            <td><span class="badge bg-danger">{{ report.count|default:1 }}</span></td>
+                                            <td>{{ report.created_at|timesince }} ago</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-success btn-sm" onclick="dismissReport({{ report.id }})" 
+                                                            data-bs-toggle="tooltip" title="Dismiss Report">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm" onclick="removeItem({{ report.item.id }})" 
+                                                            data-bs-toggle="tooltip" title="Remove Item">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    <button class="btn btn-warning btn-sm" onclick="warnUser({{ report.item.owner.id }})" 
+                                                            data-bs-toggle="tooltip" title="Warn User">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-shield-alt fa-4x text-success mb-3"></i>
+                                <h4 class="fw-bold text-muted">No reports!</h4>
+                                <p class="text-muted">The community is behaving well. No reported items at the moment.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- User Management Tab -->
+                        <div class="tab-pane fade" id="users" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">User Management</h5>
+                                <div class="d-flex gap-2">
+                                    <input type="text" class="form-control form-control-sm" placeholder="Search users..." style="width: 200px;">
+                                    <select class="form-select form-select-sm" style="width: auto;">
+                                        <option>All Users</option>
+                                        <option>Active Users</option>
+                                        <option>Suspended Users</option>
+                                        <option>New Users</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Email</th>
+                                            <th>Join Date</th>
+                                            <th>Items Listed</th>
+                                            <th>Swaps</th>
+                                            <th>Points</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in users_list %}
+                                        <tr id="user-{{ user.id }}">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle me-2">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">{{ user.first_name }} {{ user.last_name }}</div>
+                                                        <small class="text-muted">@{{ user.username }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                                            <td>{{ user.items_count|default:0 }}</td>
+                                            <td>{{ user.swaps_count|default:0 }}</td>
+                                            <td><span class="badge bg-primary">{{ user.profile.points|default:0 }}</span></td>
+                                            <td>
+                                                <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {% if user.is_active %}Active{% else %}Suspended{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-info btn-sm" onclick="viewUserProfile({{ user.id }})" 
+                                                            data-bs-toggle="tooltip" title="View Profile">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    {% if user.is_active %}
+                                                    <button class="btn btn-warning btn-sm" onclick="suspendUser({{ user.id }})" 
+                                                            data-bs-toggle="tooltip" title="Suspend User">
+                                                        <i class="fas fa-ban"></i>
+                                                    </button>
+                                                    {% else %}
+                                                    <button class="btn btn-success btn-sm" onclick="activateUser({{ user.id }})" 
+                                                            data-bs-toggle="tooltip" title="Activate User">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Analytics Tab -->
+                        <div class="tab-pane fade" id="analytics" role="tabpanel">
+                            <h5 class="fw-bold mb-4">Platform Analytics</h5>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <h6 class="fw-bold mb-0">
+                                                <i class="fas fa-chart-line me-2"></i>User Growth
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="userGrowthChart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <h6 class="fw-bold mb-0">
+                                                <i class="fas fa-chart-pie me-2"></i>Item Categories
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="categoriesChart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <h6 class="fw-bold mb-0">
+                                                <i class="fas fa-exchange-alt me-2"></i>Swap Success Rate
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row text-center">
+                                                <div class="col-6">
+                                                    <h3 class="text-success">{{ swap_success_rate|default:85 }}%</h3>
+                                                    <small class="text-muted">Success Rate</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h3 class="text-primary">{{ avg_swap_time|default:2.5 }}</h3>
+                                                    <small class="text-muted">Avg Days to Complete</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-header bg-white">
+                                            <h6 class="fw-bold mb-0">
+                                                <i class="fas fa-leaf me-2"></i>Environmental Impact
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row text-center">
+                                                <div class="col-12 mb-3">
+                                                    <h4 class="text-success">{{ items_saved|default:12500 }}</h4>
+                                                    <small class="text-muted">Items Saved from Landfill</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h5 class="text-info">{{ co2_saved|default:450 }}t</h5>
+                                                    <small class="text-muted">CO2 Reduced</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h5 class="text-warning">{{ water_saved|default:2800 }}gal</h5>
+                                                    <small class="text-muted">Water Saved</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Modals -->
+<!-- Reject Item Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectForm">
+                    <input type="hidden" id="rejectItemId">
+                    <div class="mb-3">
+                        <label for="rejectReason" class="form-label">Reason for rejection:</label>
+                        <select class="form-select" id="rejectReason" required>
+                            <option value="">Select a reason...</option>
+                            <option value="inappropriate">Inappropriate content</option>
+                            <option value="poor_quality">Poor image quality</option>
+                            <option value="misleading">Misleading description</option>
+                            <option value="duplicate">Duplicate listing</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rejectMessage" class="form-label">Additional message (optional):</label>
+                        <textarea class="form-control" id="rejectMessage" rows="3" 
+                                  placeholder="Provide additional feedback to the user..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmReject()">
+                    <i class="fas fa-times me-2"></i>Reject Item
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Admin Panel JavaScript Functions
+
+function approveItem(itemId) {
+    if (confirm('Are you sure you want to approve this item?')) {
+        fetch(`/admin/items/${itemId}/approve/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`item-${itemId}`).remove();
+                showNotification('Item approved successfully!', 'success');
+                updateStats();
+            } else {
+                showNotification(data.error || 'Error approving item.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error approving item. Please try again.', 'danger');
+        });
+    }
+}
+
+function rejectItem(itemId) {
+    document.getElementById('rejectItemId').value = itemId;
+    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+    modal.show();
+}
+
+function confirmReject() {
+    const itemId = document.getElementById('rejectItemId').value;
+    const reason = document.getElementById('rejectReason').value;
+    const message = document.getElementById('rejectMessage').value;
+    
+    if (!reason) {
+        showNotification('Please select a reason for rejection.', 'warning');
+        return;
+    }
+    
+    fetch(`/admin/items/${itemId}/reject/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            reason: reason,
+            message: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`item-${itemId}`).remove();
+            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+            showNotification('Item rejected successfully!', 'success');
+            updateStats();
+        } else {
+            showNotification(data.error || 'Error rejecting item.', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error rejecting item. Please try again.', 'danger');
+    });
+}
+
+function approveAll() {
+    if (confirm('Are you sure you want to approve ALL pending items?')) {
+        fetch('/admin/items/approve-all/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                showNotification(data.error || 'Error approving items.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error approving items. Please try again.', 'danger');
+        });
+    }
+}
+
+function dismissReport(reportId) {
+    if (confirm('Are you sure you want to dismiss this report?')) {
+        fetch(`/admin/reports/${reportId}/dismiss/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`report-${reportId}`).remove();
+                showNotification('Report dismissed successfully!', 'success');
+            } else {
+                showNotification(data.error || 'Error dismissing report.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error dismissing report. Please try again.', 'danger');
+        });
+    }
+}
+
+function removeItem(itemId) {
+    if (confirm('Are you sure you want to remove this item? This action cannot be undone.')) {
+        fetch(`/admin/items/${itemId}/remove/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Item removed successfully!', 'success');
+                // Refresh the reports tab
+                location.reload();
+            } else {
+                showNotification(data.error || 'Error removing item.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error removing item. Please try again.', 'danger');
+        });
+    }
+}
+
+function suspendUser(userId) {
+    if (confirm('Are you sure you want to suspend this user?')) {
+        fetch(`/admin/users/${userId}/suspend/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                showNotification(data.error || 'Error suspending user.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error suspending user. Please try again.', 'danger');
+        });
+    }
+}
+
+function activateUser(userId) {
+    if (confirm('Are you sure you want to activate this user?')) {
+        fetch(`/admin/users/${userId}/activate/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                showNotification(data.error || 'Error activating user.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error activating user. Please try again.', 'danger');
+        });
+    }
+}
+
+function refreshData() {
+    showNotification('Refreshing data...', 'info');
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+
+function updateStats() {
+    // Update stats counters after actions
+    fetch('/admin/api/stats/')
+        .then(response => response.json())
+        .then(data => {
+            // Update the stats numbers
+            document.querySelector('.dashboard-stat-number').textContent = data.pending_items;
+        })
+        .catch(error => {
+            console.error('Error updating stats:', error);
+        });
+}
+
+function viewItemDetails(itemId) {
+    window.open(`/items/${itemId}/`, '_blank');
+}
+
+function viewUserProfile(userId) {
+    window.open(`/users/${userId}/profile/`, '_blank');
+}
+
+// Initialize charts if Chart.js is available
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh every 5 minutes
+    setInterval(refreshData, 300000);
+    
+    // Initialize any charts here if needed
+    // This would require Chart.js to be included
+});
+</script>
+{% endblock %}
