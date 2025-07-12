@@ -5,6 +5,8 @@
 .env.development
 .env.test
 
+test.py
+
 # Virtual environment
 .venv/
 venv/
