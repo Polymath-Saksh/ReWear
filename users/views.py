@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
+from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
@@ -16,25 +17,57 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
-from .forms import PasswordResetRequestForm, PasswordResetConfirmForm
+from .forms import PasswordResetRequestForm, PasswordResetConfirmForm, UserSignupForm, UserLoginForm
 from .email_service import azure_email_service
+from .forms import UserSignupForm
 
 # Template Views for HTML pages
-class UserSignupView(TemplateView):
+class UserSignupView(View):
     template_name = 'users/signup.html'
+    form_class = UserSignupForm
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Sign Up - ReWear'
-        return context
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {
+            'form': form,
+            'title': 'Sign Up - ReWear'
+        })
+    
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Account created successfully! You can now log in.')
+            return redirect('users:login')
+        return render(request, self.template_name, {
+            'form': form,
+            'title': 'Sign Up - ReWear'
+        })
 
-class UserLoginView(TemplateView):
+class UserLoginView(View):
     template_name = 'users/login.html'
+    form_class = UserLoginForm
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Login - ReWear'
-        return context
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {
+            'form': form,
+            'title': 'Login - ReWear'
+        })
+    
+    def post(self, request):
+        form = self.form_class(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, f'Welcome back, {user.username}!')
+            # Redirect to next page or dashboard
+            next_page = request.GET.get('next', 'dashboard:dashboard')
+            return redirect(next_page)
+        return render(request, self.template_name, {
+            'form': form,
+            'title': 'Login - ReWear'
+        })
 
 class UserLogoutView(TemplateView):
     def get(self, request):
