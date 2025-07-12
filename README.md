@@ -26,29 +26,34 @@ ReWear provides a seamless experience for users to list, browse, and swap clothi
 ### **Key Features**
 
 - **🔐 User Authentication**
+
   - Email/password signup and login
   - Secure social login (Google, Facebook)
   - Profile management with avatar and bio
 
 - **🏠 Landing Page**
+
   - Eye-catching platform introduction
   - Calls-to-action: "Start Swapping", "Browse Items", "List an Item"
   - Featured items carousel with animations
   - Environmental impact statistics
 
 - **📊 User Dashboard**
+
   - Profile details and points balance
   - Uploaded items overview with status tracking
   - Ongoing and completed swaps management
   - Activity timeline and statistics
 
 - **👕 Item Management**
+
   - Detailed item pages with image galleries
   - Advanced search and filtering system
   - Upload items with multiple images
   - Comprehensive item details (title, description, category, size, condition, tags)
 
 - **🔄 Swap System**
+
   - Direct swap requests between users
   - Point-based redemption system
   - Swap tracking and status updates
@@ -59,6 +64,13 @@ ReWear provides a seamless experience for users to list, browse, and swap clothi
   - Remove inappropriate or spam content
   - User management and suspension tools
   - Platform analytics and reporting
+
+---
+
+## 📺 Demo Video
+
+Watch a demonstration of ReWear on YouTube:  
+[https://youtu.be/sCGLd-6rguw](https://youtu.be/sCGLd-6rguw)
 
 ---
 
@@ -87,16 +99,16 @@ ReWear provides a seamless experience for users to list, browse, and swap clothi
 ### Team Members
 
 - **Aloukik Joshi** (Team Leader)  
-    Email: aloukikjoshi@gmail.com  
-    GitHub: [aloukikjoshi](https://github.com/aloukikjoshi)
+   Email: aloukikjoshi@gmail.com  
+   GitHub: [aloukikjoshi](https://github.com/aloukikjoshi)
 
 - **Saksham Kumar** (Member)  
-    Email: sakshamkumarprasad03@gmail.com  
-    GitHub: [Polymath-Saksh](https://github.com/Polymath-Saksh)
+   Email: sakshamkumarprasad03@gmail.com  
+   GitHub: [Polymath-Saksh](https://github.com/Polymath-Saksh)
 
 - **Nihal Pandey** (Member)  
-    Email: nihalvyas1234@gmail.com  
-    GitHub: [NihalPandey5060](https://github.com/NihalPandey5060)
+   Email: nihalvyas1234@gmail.com  
+   GitHub: [NihalPandey5060](https://github.com/NihalPandey5060)
 
 ## ⚡️ Quick Start
 
@@ -190,10 +202,10 @@ Access the application at [http://localhost:8000](http://localhost:8000)
 
 ---
 
-
 ## 📈 Environmental Impact
 
 ReWear contributes to sustainability by:
+
 - **Reducing Textile Waste:** Extending the life cycle of clothing items
 - **Lowering Carbon Footprint:** Reducing demand for new clothing production
 - **Promoting Circular Economy:** Encouraging reuse and recycling
@@ -206,6 +218,7 @@ ReWear contributes to sustainability by:
 - **Team Lead:** Aloukik Joshi (aloukikjoshi@gmail.com)
 
 ---
+
 ## 🙏 Acknowledgments
 
 - **Odoo Hackathon 2025** for providing the platform and inspiration
@@ -215,4 +228,10 @@ ReWear contributes to sustainability by:
 
 ---
 
-*Made with ❤️ by Team Kairos*
+_Made with ❤️ by Team Kairos_
+
+---
+
+## 📜 License
+
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](LICENSE) license. See the [LICENSE](LICENSE) file for details.
