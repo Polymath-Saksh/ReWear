@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ReWear - Community Clothing Exchange{% endblock %}</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     {% load static %}
-{% load socialaccount %}
+    {% load socialaccount %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    
+
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
@@ -28,11 +32,11 @@
                 <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="navbar-logo me-2">
                 ReWear
             </a>
-            
+
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -47,11 +51,12 @@
                     </li>
                     {% endif %}
                 </ul>
-                
+
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                            data-bs-toggle="dropdown">
                             <div class="avatar-circle me-2">
                                 <i class="fas fa-user"></i>
                             </div>
@@ -60,40 +65,48 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
                             <li><a class="dropdown-item" href="{% url 'dashboard:profile' %}">
-                                <i class="fas fa-user me-2"></i>Profile
-                            </a></li>
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a></li>
                             <li><a class="dropdown-item" href="{% url 'dashboard:dashboard' %}">
-                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item text-danger" href="{% url 'users:logout' %}">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </a></li>
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
                         </ul>
                     </li>
                     {% else %}
+                    {% get_providers as socialaccount_providers %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle fw-500" href="#" role="button" data-bs-toggle="dropdown">
                             Login
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
                             <li><a class="dropdown-item" href="{% url 'users:login' %}">
-                                <i class="fas fa-envelope me-2"></i>Login with Email
-                            </a></li>
-                            {% get_providers as socialaccount_providers %}
+                                    <i class="fas fa-envelope me-2"></i>Login with Email
+                                </a></li>
+                            {% if socialaccount_providers %}
                             {% for provider in socialaccount_providers %}
-                                {% if provider.id == "google" %}
-                                <li><a class="dropdown-item" href="{% provider_login_url 'google' %}">
+                            {% if provider.id == "google" %}
+                            <li><a class="dropdown-item" href="{% provider_login_url 'google' %}">
                                     <svg class="me-2" width="16" height="16" viewBox="0 0 24 24">
-                                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                        <path fill="#4285F4"
+                                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                        <path fill="#34A853"
+                                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                        <path fill="#FBBC05"
+                                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                        <path fill="#EA4335"
+                                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                                     </svg>
                                     Login with Google
                                 </a></li>
-                                {% endif %}
+                            {% endif %}
                             {% endfor %}
+                            {% endif %}
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -112,7 +125,8 @@
     <div class="container mt-3">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+            <i
+                class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -134,7 +148,7 @@
                         <i class="fas fa-recycle me-2"></i>ReWear
                     </h5>
                     <p class="text-muted">
-                        Promoting sustainable fashion through community-driven clothing exchange. 
+                        Promoting sustainable fashion through community-driven clothing exchange.
                         Reduce textile waste, one swap at a time.
                     </p>
                     <div class="social-links">
@@ -147,7 +161,8 @@
                 <div class="col-md-2 mb-4">
                     <h6 class="fw-bold">Platform</h6>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'items:browse' %}" class="text-muted text-decoration-none">Browse Items</a></li>
+                        <li><a href="{% url 'items:browse' %}" class="text-muted text-decoration-none">Browse Items</a>
+                        </li>
                         <li><a href="{% url 'items:add' %}" class="text-muted text-decoration-none">List Item</a></li>
                         <li><a href="#" class="text-muted text-decoration-none">How It Works</a></li>
                     </ul>
@@ -195,7 +210,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
     <script src="{% static 'js/main.js' %}"></script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

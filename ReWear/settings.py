@@ -161,7 +161,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
 AZURE_ACCOUNT_NAME = os.getenv('AZURE_ACCOUNT_NAME', 'your_azure_account_name')
