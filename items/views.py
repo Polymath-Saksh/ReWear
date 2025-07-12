@@ -85,7 +85,15 @@ def browse_items_view(request):
 
 def item_detail_view(request, item_id):
     """Display single item detail"""
-    item = get_object_or_404(Item, id=item_id, is_approved=True)
+    # Allow owners to view their own items even if not approved
+    if request.user.is_authenticated:
+        item = get_object_or_404(Item, id=item_id)
+        # If not the owner and not approved, deny access
+        if item.owner != request.user and not item.is_approved:
+            return render(request, 'items/not_approved.html', {'item': item})
+    else:
+        item = get_object_or_404(Item, id=item_id, is_approved=True)
+    
     related_items = Item.objects.filter(
         category=item.category,
         is_approved=True,
@@ -106,7 +114,7 @@ def add_item_view(request):
         if form.is_valid():
             item = form.save(commit=False)
             item.owner = request.user
-            item.is_approved = True  # Auto-approve for hackathon
+            item.is_approved = False  # Items require admin approval
             item.save()
             
             # Handle single image upload
@@ -115,8 +123,8 @@ def add_item_view(request):
                 azure_url = upload_to_azure_blob(image, image.name)
                 ItemImage.objects.create(item=item, azure_file_url=azure_url)
             
-            messages.success(request, 'Item listed successfully!')
-            return redirect('items:detail', item_id=item.pk)
+            messages.success(request, 'Item submitted successfully! It will be visible after admin approval.')
+            return redirect('items:my_items')
     else:
         form = ItemForm()
     

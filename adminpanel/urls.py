@@ -13,4 +13,5 @@ urlpatterns = [
     # API Endpoints for item management
     path('api/items/pending/', views.PendingItemListView.as_view(), name='pending-items'),
     path('api/items/<int:pk>/approve/', views.ApproveItemView.as_view(), name='approve-item'),
+    path('api/items/<int:pk>/reject/', views.RejectItemView.as_view(), name='reject-item'),
 ]
