@@ -6,6 +6,25 @@ ReWear is a web-based platform designed to promote sustainable fashion and reduc
 
 ---
 
+## 📺 Demo Video
+
+Watch a demonstration of ReWear on YouTube:  
+[https://youtu.be/sCGLd-6rguw](https://youtu.be/sCGLd-6rguw)
+
+<!-- YouTube embed -->
+<p align="center">
+  <a href="https://youtu.be/sCGLd-6rguw" target="_blank">
+    <img src="https://img.youtube.com/vi/sCGLd-6rguw/0.jpg" alt="Demo Video Thumbnail" width="480"/>
+  </a>
+</p>
+<p align="center">
+  <a href="https://youtu.be/sCGLd-6rguw" target="_blank">
+    ▶️ Click to play the demo video
+  </a>
+</p>
+
+---
+
 ## 🌱 Problem Statement
 
 **ReWear – Community Clothing Exchange**
@@ -64,25 +83,6 @@ ReWear provides a seamless experience for users to list, browse, and swap clothi
   - Remove inappropriate or spam content
   - User management and suspension tools
   - Platform analytics and reporting
-
----
-
-## 📺 Demo Video
-
-Watch a demonstration of ReWear on YouTube:  
-[https://youtu.be/sCGLd-6rguw](https://youtu.be/sCGLd-6rguw)
-
-<!-- YouTube embed -->
-<p align="center">
-  <a href="https://youtu.be/sCGLd-6rguw" target="_blank">
-    <img src="https://img.youtube.com/vi/sCGLd-6rguw/0.jpg" alt="Demo Video Thumbnail" width="480"/>
-  </a>
-</p>
-<p align="center">
-  <a href="https://youtu.be/sCGLd-6rguw" target="_blank">
-    ▶️ Click to play the demo video
-  </a>
-</p>
 
 ---
 
