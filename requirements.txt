@@ -1,6 +1,26 @@
-djangorestframework
-django-cors-headers
-django-allauth
-psycopg2
-django-storages[azure]
-python-dotenv
+# Django and REST framework
+Django==5.1.5
+djangorestframework==3.16.0
+django-cors-headers==4.7.0
+
+# Authentication
+django-allauth==65.10.0
+PyJWT==2.10.1
+
+# Database
+psycopg2==2.9.10
+
+# Azure Storage
+django-storages[azure]==1.14.6
+azure-storage-blob==12.25.1
+azure-core==1.35.0
+azure-communication-email==1.0.0
+
+# Environment and Utils
+python-dotenv==1.1.1
+pillow  # For image handling
+whitenoise  # For static files in production
+gunicorn  # For production server
+django-filter  # For filtering in DRF
+requests  # For HTTP requests
+urllib3  # Required by requests
