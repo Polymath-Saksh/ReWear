@@ -80,6 +80,17 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.8rem !important;
 }
 
+.navbar-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+    transform: rotate(10deg) scale(1.1);
+}
+
 .nav-link {
     font-weight: 500;
     transition: color 0.3s ease;
@@ -195,6 +206,34 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0.8;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.hero-visual {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.hero-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    animation: heroLogoFloat 6s ease-in-out infinite;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes heroLogoFloat {
+    0%, 100% { 
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    50% { 
+        transform: translateY(-15px) rotate(5deg) scale(1.05);
+    }
 }
 
 /* Buttons */
@@ -423,6 +462,32 @@ h1, h2, h3, h4, h5, h6 {
     .btn-lg {
         padding: 12px 30px;
         font-size: 1rem;
+    }
+    
+    .navbar-logo {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .hero-logo {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-logo {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .navbar-logo {
+        width: 30px;
+        height: 30px;
     }
 }
 
