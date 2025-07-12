@@ -329,16 +329,51 @@
 
 function approveItem(itemId) {
     if (confirm('Are you sure you want to approve this item?')) {
-        // For monitoring purposes - show notification
-        showNotification('Item approved successfully!', 'success');
-        document.getElementById(`item-${itemId}`).remove();
+        fetch(`/adminpanel/api/items/${itemId}/approve/`, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            showNotification('Item approved successfully!', 'success');
+            document.getElementById(`item-${itemId}`).remove();
+            // Update counters
+            updateCounters();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error approving item. Please try again.', 'danger');
+        });
     }
 }
 
 function rejectItem(itemId) {
-    document.getElementById('rejectItemId').value = itemId;
-    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
-    modal.show();
+    if (confirm('Are you sure you want to reject this item?')) {
+        fetch(`/adminpanel/api/items/${itemId}/reject/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                showNotification('Item rejected successfully!', 'success');
+                document.getElementById(`item-${itemId}`).remove();
+                // Update counters
+                updateCounters();
+            } else {
+                throw new Error('Failed to reject item');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error rejecting item. Please try again.', 'danger');
+        });
+    }
 }
 
 function confirmReject() {
@@ -360,6 +395,31 @@ function approveAll() {
         showNotification('All items approved successfully!', 'success');
         setTimeout(() => location.reload(), 1000);
     }
+}
+
+function updateCounters() {
+    // Refresh the page to update counters
+    setTimeout(() => location.reload(), 1000);
+}
+
+function viewItemDetails(itemId) {
+    // Open item detail in new tab
+    window.open(`/items/${itemId}/`, '_blank');
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 function suspendUser(userId) {

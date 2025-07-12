@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Item Pending Approval - ReWear{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center">
+                <!-- Status Icon -->
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10" 
+                         style="width: 120px; height: 120px;">
+                        <i class="fas fa-clock fa-3x text-warning"></i>
+                    </div>
+                </div>
+                
+                <!-- Main Message -->
+                <h2 class="fw-bold mb-3">Item Pending Approval</h2>
+                <p class="lead text-muted mb-4">
+                    "{{ item.title }}" is currently being reviewed by our moderation team and will be available soon.
+                </p>
+                
+                <!-- Item Preview Card -->
+                <div class="card border-0 shadow-sm mb-4" style="max-width: 400px; margin: 0 auto;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <img src="{% if item.images.first and item.images.first.azure_file_url %}
+                                        {{ item.images.first.azure_file_url }}
+                                     {% else %}
+                                        https://via.placeholder.com/80x80?text=No+Image
+                                     {% endif %}" 
+                                 class="rounded me-3" width="80" height="80" style="object-fit: cover;">
+                            <div class="text-start">
+                                <h6 class="fw-bold mb-1">{{ item.title }}</h6>
+                                <small class="text-muted">{{ item.get_category_display }} • {{ item.size }}</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock me-1"></i>Pending Review
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Information -->
+                <div class="alert alert-info d-inline-block text-start">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-info-circle me-2"></i>What happens next?
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Our team will review your item within 24 hours</li>
+                        <li>You'll receive a notification once it's approved</li>
+                        <li>Your item will then be visible to other users for swapping</li>
+                    </ul>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 justify-content-center mt-4">
+                    {% if user == item.owner %}
+                    <a href="{% url 'items:my_items' %}" class="btn btn-primary">
+                        <i class="fas fa-list me-2"></i>View My Items
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'items:browse' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-2"></i>Browse Other Items
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
