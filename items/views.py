@@ -8,6 +8,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .models import Item, ItemImage
+from .forms import ItemForm
 from .serializers import ItemSerializer, ItemImageSerializer
 from rest_framework.permissions import IsAuthenticated
 
@@ -81,37 +82,23 @@ def item_detail_view(request, item_id):
     return render(request, 'items/detail.html', context)
 
 @login_required
+@login_required
 def add_item_view(request):
     """Add new item form"""
     if request.method == 'POST':
-        # Handle form submission
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        category = request.POST.get('category')
-        size = request.POST.get('size')
-        condition = request.POST.get('condition')
-        point_value = request.POST.get('point_value', 10)
-        
-        # Create the item
-        item = Item.objects.create(
-            owner=request.user,
-            title=title,
-            description=description,
-            category=category,
-            size=size,
-            condition=condition,
-            point_value=int(point_value) if point_value else 10,
-            is_approved=True  # Auto-approve for hackathon
-        )
-        
-        messages.success(request, 'Item listed successfully!')
-        return redirect('items:detail', item_id=item.pk)
+        form = ItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.owner = request.user
+            item.is_approved = True  # Auto-approve for hackathon
+            item.save()
+            
+            messages.success(request, 'Item listed successfully!')
+            return redirect('items:detail', item_id=item.pk)
+    else:
+        form = ItemForm()
     
-    context = {
-        'categories': Item.CATEGORY_CHOICES,
-        'conditions': Item.CONDITION_CHOICES,
-    }
-    return render(request, 'items/add.html', context)
+    return render(request, 'items/add.html', {'form': form})
 
 @login_required
 def my_items_view(request):
