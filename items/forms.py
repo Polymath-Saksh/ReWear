@@ -6,7 +6,10 @@ class ItemForm(forms.ModelForm):
     
     class Meta:
         model = Item
-        fields = ['title', 'description', 'category', 'type', 'brand', 'size', 'condition', 'image']
+        fields = [
+            'title', 'description', 'category', 'size', 'condition',
+            'tags', 'point_value', 'is_available'
+        ]
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control form-control-lg',
@@ -20,23 +23,22 @@ class ItemForm(forms.ModelForm):
             'category': forms.Select(attrs={
                 'class': 'form-select form-select-lg',
             }),
-            'type': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'e.g., Jacket, T-shirt, Sneakers'
-            }),
-            'brand': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'e.g., Nike, Zara, Uniqlo (Optional)'
-            }),
             'size': forms.Select(attrs={
                 'class': 'form-select form-select-lg',
             }),
             'condition': forms.Select(attrs={
                 'class': 'form-select form-select-lg',
             }),
-            'image': forms.ClearableFileInput(attrs={
+            'tags': forms.TextInput(attrs={
                 'class': 'form-control form-control-lg',
-                'accept': 'image/*'
+                'placeholder': 'e.g., summer, casual'
+            }),
+            'point_value': forms.NumberInput(attrs={
+                'class': 'form-control form-control-lg',
+                'placeholder': 'Enter point value'
+            }),
+            'is_available': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
             }),
         }
         

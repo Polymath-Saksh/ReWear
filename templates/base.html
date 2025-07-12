@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +22,6 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    {% load static %}
     {% load socialaccount %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
@@ -33,7 +33,8 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary fs-2" href="{% url 'core:landing' %}">
-                <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="navbar-logo me-2" style="height: 2em;">
+                <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="navbar-logo me-2"
+                    style="height: 2em;">
                 ReWear
             </a>
 
@@ -114,7 +115,9 @@
                             {% endif %}
                             {% endfor %}
                             {% endif %}
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li class="dropdown-header fw-bold text-muted">Admin Access</li>
                             <li><a class="dropdown-item" href="{% url 'adminpanel:login' %}">
                                     <i class="fas fa-shield-alt me-2"></i>Admin Login
@@ -157,7 +160,8 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <h6 class="fw-bold text-primary mb-2">
-                        <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="footer-logo me-2" style="height: 1.5em;">ReWear
+                        <img src="{% static 'images/hero-logo.png' %}" alt="ReWear Logo" class="footer-logo me-2"
+                            style="height: 1.5em;">ReWear
                     </h6>
                     <p class="mb-0 text-light opacity-75 small">
                         Sustainable Fashion Exchange Platform
@@ -165,9 +169,12 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="mb-2">
-                        <a href="{% url 'items:browse' %}" class="text-light opacity-75 text-decoration-none me-3 small">Browse</a>
-                        <a href="{% url 'items:add' %}" class="text-light opacity-75 text-decoration-none me-3 small">List Item</a>
-                        <a href="{% url 'core:landing' %}" class="text-light opacity-75 text-decoration-none small">Home</a>
+                        <a href="{% url 'items:browse' %}"
+                            class="text-light opacity-75 text-decoration-none me-3 small">Browse</a>
+                        <a href="{% url 'items:add' %}"
+                            class="text-light opacity-75 text-decoration-none me-3 small">List Item</a>
+                        <a href="{% url 'core:landing' %}"
+                            class="text-light opacity-75 text-decoration-none small">Home</a>
                     </div>
                     <p class="mb-0 text-light opacity-75 small">&copy; 2025 ReWear - Built for Hackathon</p>
                 </div>
