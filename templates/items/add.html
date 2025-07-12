@@ -95,7 +95,11 @@
                                     <label for="{{ form.size.id_for_label }}" class="form-label fw-bold">
                                         Size <span class="text-danger">*</span>
                                     </label>
-                                    {{ form.size }}
+                                    <input type="text" class="form-control form-control-lg"
+                                        id="{{ form.size.id_for_label }}" name="{{ form.size.name }}"
+                                        value="{{ form.size.value|default:'' }}"
+                                        placeholder="e.g., S, M, L, XL, 32, 10" required>
+                                    <div class="form-text">Standard size or measurements</div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -393,74 +397,5 @@
             tagsInput.value = currentTags.join(', ');
         }
     }
-</script>
-{% endblock %}
-firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-firstError.focus();
-}
-}
-form.classList.add('was-validated');
-});
-
-// Character counter for title
-const titleInput = document.getElementById('{{ form.title.id_for_label }}');
-if (titleInput) {
-const titleContainer = titleInput.parentElement;
-const counter = document.createElement('div');
-counter.className = 'form-text text-end';
-counter.innerHTML = '<span id="titleCounter">0</span>/100 characters';
-titleContainer.appendChild(counter);
-
-const counterSpan = document.getElementById('titleCounter');
-titleInput.addEventListener('input', function() {
-counterSpan.textContent = this.value.length;
-if (this.value.length > 90) {
-counter.classList.add('text-warning');
-} else {
-counter.classList.remove('text-warning');
-}
-});
-
-// Initial count
-counterSpan.textContent = titleInput.value.length;
-}
-
-// Tags input enhancement
-const tagsInput = document.getElementById('{{ form.tags.id_for_label }}');
-if (tagsInput) {
-tagsInput.addEventListener('keydown', function(e) {
-if (e.key === 'Enter') {
-e.preventDefault();
-}
-});
-
-// Auto-suggest popular tags
-const popularTags = ['vintage', 'designer', 'casual', 'formal', 'summer', 'winter', 'cotton', 'silk', 'denim',
-'leather'];
-
-// Create suggestion container
-const suggestionContainer = document.createElement('div');
-suggestionContainer.className = 'mt-2';
-suggestionContainer.innerHTML = `
-<small class="text-muted">Popular tags:</small><br>
-${popularTags.map(tag => `
-<button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="addTag('${tag}')">
-    #${tag}
-</button>
-`).join('')}
-`;
-tagsInput.parentElement.appendChild(suggestionContainer);
-}
-});
-
-function addTag(tag) {
-const tagsInput = document.getElementById('{{ form.tags.id_for_label }}');
-const currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
-
-if (!currentTags.includes(tag)) {
-currentTags.push(tag);
-tagsInput.value = currentTags.join(', ');
-}
-}
 </script>
 {% endblock %}
