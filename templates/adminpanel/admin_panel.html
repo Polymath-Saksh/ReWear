@@ -146,7 +146,7 @@
                                         <tr id="item-{{ item.id }}">
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="{% if item.images.first and item.images.first.azure_file_url %}{{ item.images.first.azure_file_url }}{% else %}https://via.placeholder.com/60x60?text=No+Image{% endif %}" 
+                                                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://via.placeholder.com/60x60?text=No+Image{% endif %}" 
                                                          class="rounded me-3" width="60" height="60" style="object-fit: cover;">
                                                     <div>
                                                         <h6 class="fw-bold mb-1">{{ item.title }}</h6>
